@@ -241,7 +241,7 @@ const LiveGrid = () => {
         <button className="bg-slate-700 hover:bg-slate-600 text-white px-8 py-3 rounded-lg transition-colors">
           查看更多
         </button>
-      </div>
+      </motion.div>
     </div>
   );
 };
