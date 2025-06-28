@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Home, 
   Heart, 
@@ -7,10 +7,14 @@ import {
   Users, 
   Settings, 
   Crown,
-  Globe
+  Globe,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 
 const Sidebar = () => {
+  const [showAllCategories, setShowAllCategories] = useState(false);
+
   const mainNavItems = [
     { icon: Home, label: '主页', active: true },
     { icon: Heart, label: '我的最爱', count: 0 },
@@ -20,12 +24,15 @@ const Sidebar = () => {
     { icon: Settings, label: '隐私配置' }
   ];
 
-  // 合并所有分类到一个列表
-  const allCategories = [
-    // 特别分类
+  // 基础分类（始终显示）
+  const basicCategories = [
     { type: 'special', icon: Star, label: '新主播', count: 646, color: 'bg-blue-500' },
-    
-    // 国家/地区分类
+    { type: 'special', icon: Heart, label: '热门', count: 1234, color: 'bg-red-500' },
+    { type: 'special', icon: Crown, label: 'VIP', count: 567, color: 'bg-yellow-500' }
+  ];
+
+  // 国家/地区分类（隐藏在"全部分类"中）
+  const countryCategories = [
     { type: 'country', flag: '🇨🇳', label: '中国', count: 1625 },
     { type: 'country', flag: '🇺🇸', label: '美国', count: 2847 },
     { type: 'country', flag: '🇷🇺', label: '俄罗斯', count: 1519 },
@@ -79,24 +86,20 @@ const Sidebar = () => {
           ))}
         </nav>
 
-        {/* 统一分类列表 */}
-        <div className="mb-8">
+        {/* 基础分类 */}
+        <div className="mb-6">
           <h3 className="text-slate-400 text-sm font-medium mb-4 uppercase tracking-wider">
             分类
           </h3>
-          <div className="space-y-1 max-h-96 overflow-y-auto">
-            {allCategories.map((category, index) => (
+          <div className="space-y-1">
+            {basicCategories.map((category, index) => (
               <motion.a
                 key={index}
                 href="#"
                 whileHover={{ x: 5 }}
                 className="flex items-center space-x-3 px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
               >
-                {category.type === 'special' ? (
-                  <div className={`w-3 h-3 rounded-full ${category.color}`} />
-                ) : (
-                  <span className="text-lg">{category.flag}</span>
-                )}
+                <div className={`w-3 h-3 rounded-full ${category.color}`} />
                 <span className="flex-1 text-sm">{category.label}</span>
                 <span className="text-xs text-slate-400">{category.count}</span>
               </motion.a>
@@ -104,11 +107,51 @@ const Sidebar = () => {
           </div>
         </div>
 
-        {/* Footer */}
+        {/* 全部分类按钮 */}
         <div className="border-t border-slate-700 pt-4">
-          <button className="w-full bg-slate-700 hover:bg-slate-600 text-white py-2 px-4 rounded-lg text-sm transition-colors">
-            全部分类
-          </button>
+          <motion.button
+            onClick={() => setShowAllCategories(!showAllCategories)}
+            whileHover={{ x: 5 }}
+            className="w-full flex items-center justify-between bg-slate-700 hover:bg-slate-600 text-white py-3 px-4 rounded-lg text-sm transition-colors"
+          >
+            <div className="flex items-center space-x-2">
+              <Globe size={16} />
+              <span>全部分类</span>
+            </div>
+            {showAllCategories ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+          </motion.button>
+
+          {/* 展开的国家分类列表 */}
+          <AnimatePresence>
+            {showAllCategories && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3 }}
+                className="mt-2 space-y-1 max-h-64 overflow-y-auto bg-slate-750 rounded-lg p-2"
+              >
+                <div className="text-slate-400 text-xs font-medium mb-2 px-2 uppercase tracking-wider">
+                  国家/地区
+                </div>
+                {countryCategories.map((category, index) => (
+                  <motion.a
+                    key={index}
+                    href="#"
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.02 }}
+                    whileHover={{ x: 5 }}
+                    className="flex items-center space-x-3 px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-600 hover:text-white transition-colors"
+                  >
+                    <span className="text-base">{category.flag}</span>
+                    <span className="flex-1 text-sm">{category.label}</span>
+                    <span className="text-xs text-slate-400">{category.count}</span>
+                  </motion.a>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </motion.aside>
