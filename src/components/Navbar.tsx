@@ -44,20 +44,6 @@ const Navbar: React.FC<NavbarProps> = ({ onLogoClick }) => {
                 <Menu size={24} />
               </button>
               <Logo onClick={onLogoClick} />
-              
-              {/* Live Status */}
-              <div className="hidden md:flex items-center space-x-2 bg-red-500 px-3 py-1 rounded-full">
-                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                <span className="text-white text-sm font-medium">8441 直播中</span>
-              </div>
-
-              {/* Navigation Links */}
-              <div className="hidden lg:flex items-center space-x-6">
-                <a href="#" className="text-white hover:text-red-200 transition-colors text-sm">女主播</a>
-                <a href="#" className="text-white hover:text-red-200 transition-colors text-sm">情侣</a>
-                <a href="#" className="text-white hover:text-red-200 transition-colors text-sm">男主播</a>
-                <a href="#" className="text-white hover:text-red-200 transition-colors text-sm">跨性别</a>
-              </div>
             </div>
 
             {/* Center - Search */}
