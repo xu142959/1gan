@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Search, Bell, User, Gift, Settings, LogOut, Crown, Heart, Users, Bookmark, Shield, Volume2, RefreshCw } from 'lucide-react';
+import { Menu, X, Search, Bell, User, Gift, Settings, LogOut, Crown, Heart, Users, Bookmark, Shield, Volume2, RefreshCw, Video } from 'lucide-react';
 import AuthModal from './AuthModal';
 
 interface NavbarProps {
@@ -9,6 +9,7 @@ interface NavbarProps {
   onMyFriendsClick?: () => void;
   onNotificationsClick?: () => void;
   onSettingsPrivacyClick?: () => void;
+  onStreamerDashboardClick?: () => void;
 }
 
 const Logo: React.FC<{ onClick: () => void }> = ({ onClick }) => (
@@ -28,7 +29,8 @@ const Navbar: React.FC<NavbarProps> = ({
   onUserProfileClick,
   onMyFriendsClick,
   onNotificationsClick,
-  onSettingsPrivacyClick
+  onSettingsPrivacyClick,
+  onStreamerDashboardClick
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
@@ -220,6 +222,15 @@ const Navbar: React.FC<NavbarProps> = ({
                           <button className="w-full flex items-center space-x-3 px-4 py-2 text-slate-300 hover:bg-slate-700 hover:text-white transition-colors">
                             <Heart size={16} />
                             <span className="text-sm">我的最爱</span>
+                          </button>
+
+                          {/* Streamer Dashboard */}
+                          <button 
+                            onClick={() => handleMenuItemClick(onStreamerDashboardClick)}
+                            className="w-full flex items-center space-x-3 px-4 py-2 text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+                          >
+                            <Video size={16} />
+                            <span className="text-sm">直播中心</span>
                           </button>
                         </div>
 

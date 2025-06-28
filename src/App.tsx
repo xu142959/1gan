@@ -16,6 +16,7 @@ import UserProfilePage from './components/UserProfilePage';
 import MyFriendsPage from './components/MyFriendsPage';
 import NotificationsPage from './components/NotificationsPage';
 import SettingsPrivacyPage from './components/SettingsPrivacyPage';
+import StreamerDashboard from './components/StreamerDashboard';
 
 type ViewType = 
   | 'home' 
@@ -33,7 +34,8 @@ type ViewType =
   | 'user-profile'
   | 'my-friends'
   | 'notifications'
-  | 'settings-privacy';
+  | 'settings-privacy'
+  | 'streamer-dashboard';
 
 function App() {
   const [currentView, setCurrentView] = useState<ViewType>('home');
@@ -108,9 +110,20 @@ function App() {
     setCurrentView('settings-privacy');
   };
 
+  const navigateToStreamerDashboard = () => {
+    setCurrentView('streamer-dashboard');
+  };
+
   return (
     <div className="bg-slate-900 min-h-screen">
-      <Navbar onLogoClick={navigateToHome} />
+      <Navbar 
+        onLogoClick={navigateToHome}
+        onUserProfileClick={navigateToUserProfile}
+        onMyFriendsClick={navigateToMyFriends}
+        onNotificationsClick={navigateToNotifications}
+        onSettingsPrivacyClick={navigateToSettingsPrivacy}
+        onStreamerDashboardClick={navigateToStreamerDashboard}
+      />
       <div className="pt-16">
         {currentView === 'home' && (
           <HomePage 
@@ -206,6 +219,11 @@ function App() {
         )}
         {currentView === 'settings-privacy' && (
           <SettingsPrivacyPage 
+            onBackToHome={navigateToHome}
+          />
+        )}
+        {currentView === 'streamer-dashboard' && (
+          <StreamerDashboard 
             onBackToHome={navigateToHome}
           />
         )}
