@@ -90,17 +90,23 @@ const CategoriesPage: React.FC<CategoriesPageProps> = ({ onBackToHome }) => {
   const getFilteredCategories = () => {
     switch (selectedTab) {
       case 'countries':
-        return countryCategories.filter(cat => 
-          !searchTerm || cat.label.toLowerCase().includes(searchTerm.toLowerCase())
-        );
+        return countryCategories
+          .filter(cat => 
+            !searchTerm || cat.label.toLowerCase().includes(searchTerm.toLowerCase())
+          )
+          .map(cat => ({ ...cat, type: 'country', icon: Globe }));
       case 'content':
-        return contentCategories.filter(cat => 
-          !searchTerm || cat.label.toLowerCase().includes(searchTerm.toLowerCase())
-        );
+        return contentCategories
+          .filter(cat => 
+            !searchTerm || cat.label.toLowerCase().includes(searchTerm.toLowerCase())
+          )
+          .map(cat => ({ ...cat, type: 'content' }));
       case 'special':
-        return specialCategories.filter(cat => 
-          !searchTerm || cat.label.toLowerCase().includes(searchTerm.toLowerCase())
-        );
+        return specialCategories
+          .filter(cat => 
+            !searchTerm || cat.label.toLowerCase().includes(searchTerm.toLowerCase())
+          )
+          .map(cat => ({ ...cat, type: 'special' }));
       default:
         return getAllCategories();
     }
