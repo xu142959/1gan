@@ -23,10 +23,20 @@ const Navbar: React.FC<NavbarProps> = ({ onLogoClick }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login state
 
   const openAuthModal = (mode: 'login' | 'register') => {
     setAuthMode(mode);
     setAuthModalOpen(true);
+  };
+
+  const handleAuthSuccess = () => {
+    setIsLoggedIn(true);
+    setAuthModalOpen(false);
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
   };
 
   return (
@@ -76,12 +86,27 @@ const Navbar: React.FC<NavbarProps> = ({ onLogoClick }) => {
                 添加代币
               </motion.button>
 
-              <button 
-                onClick={() => openAuthModal('login')}
-                className="text-white hover:text-red-200 transition-colors"
-              >
-                <User size={20} />
-              </button>
+              {/* Conditionally render user icon only when logged in */}
+              {isLoggedIn ? (
+                <div className="relative">
+                  <button 
+                    onClick={handleLogout}
+                    className="text-white hover:text-red-200 transition-colors"
+                    title="点击退出登录"
+                  >
+                    <User size={20} />
+                  </button>
+                </div>
+              ) : (
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => openAuthModal('login')}
+                  className="bg-white/10 backdrop-blur-sm text-white px-4 py-2 rounded-full font-medium hover:bg-white/20 transition-colors text-sm border border-white/20"
+                >
+                  登录
+                </motion.button>
+              )}
             </div>
           </div>
         </div>
@@ -91,6 +116,7 @@ const Navbar: React.FC<NavbarProps> = ({ onLogoClick }) => {
         isOpen={authModalOpen} 
         onClose={() => setAuthModalOpen(false)}
         initialMode={authMode}
+        onAuthSuccess={handleAuthSuccess}
       />
     </>
   );
