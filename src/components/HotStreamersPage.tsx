@@ -1,17 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  ArrowLeft, 
-  Search, 
-  Heart,
-  Eye,
-  Play,
-  Star,
-  Loader,
-  Filter,
-  TrendingUp,
-  Fire
-} from 'lucide-react';
+import { ArrowLeft, Search, Heart, Eye, Play, Star, Loader, Filter, TrendingUp, Siren as Fire } from 'lucide-react';
 
 interface HotStreamersPageProps {
   onBackToHome: () => void;
