@@ -15,10 +15,15 @@ import {
   Camera,
   Mic,
   MicOff,
-  VideoOff
+  VideoOff,
+  ArrowLeft
 } from 'lucide-react';
 
-const LiveRoom = () => {
+interface LiveRoomProps {
+  onBackToHome: () => void;
+}
+
+const LiveRoom: React.FC<LiveRoomProps> = ({ onBackToHome }) => {
   const [isMuted, setIsMuted] = useState(false);
   const [message, setMessage] = useState('');
   const [isFollowing, setIsFollowing] = useState(false);
@@ -51,6 +56,12 @@ const LiveRoom = () => {
       <div className="bg-slate-800 border-b border-slate-700 p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
+            <button 
+              onClick={onBackToHome}
+              className="text-slate-400 hover:text-white transition-colors"
+            >
+              <ArrowLeft size={20} />
+            </button>
             <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center">
               <span className="text-white font-bold">B</span>
             </div>

@@ -3,16 +3,23 @@ import { motion } from 'framer-motion';
 import { Menu, X, Search, Bell, User, Settings, Gift } from 'lucide-react';
 import AuthModal from './AuthModal';
 
-const Logo = () => (
-  <div className="flex items-center space-x-2">
+interface NavbarProps {
+  onLogoClick: () => void;
+}
+
+const Logo: React.FC<{ onClick: () => void }> = ({ onClick }) => (
+  <button 
+    onClick={onClick}
+    className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
+  >
     <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-pink-600 rounded-lg flex items-center justify-center">
       <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
     </div>
     <span className="text-white font-bold text-xl">STRIPCHAT</span>
-  </div>
+  </button>
 );
 
-const Navbar = () => {
+const Navbar: React.FC<NavbarProps> = ({ onLogoClick }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
@@ -36,7 +43,7 @@ const Navbar = () => {
               <button className="text-white hover:text-red-200 transition-colors">
                 <Menu size={24} />
               </button>
-              <Logo />
+              <Logo onClick={onLogoClick} />
               
               {/* Live Status */}
               <div className="hidden md:flex items-center space-x-2 bg-red-500 px-3 py-1 rounded-full">

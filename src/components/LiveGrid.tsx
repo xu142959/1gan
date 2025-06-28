@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Eye, Heart, Star, Gift, Users, Play } from 'lucide-react';
 
+interface LiveGridProps {
+  onStreamClick: () => void;
+}
+
 const liveStreams = [
   {
     id: 1,
@@ -113,7 +117,7 @@ const liveStreams = [
   }
 ];
 
-const LiveGrid = () => {
+const LiveGrid: React.FC<LiveGridProps> = ({ onStreamClick }) => {
   const [selectedSection, setSelectedSection] = useState('我的最爱');
 
   const sections = [
@@ -158,6 +162,7 @@ const LiveGrid = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: index * 0.05 }}
             whileHover={{ y: -5, scale: 1.02 }}
+            onClick={onStreamClick}
             className="bg-slate-800 rounded-xl overflow-hidden cursor-pointer group"
           >
             <div className="relative aspect-[4/3]">
