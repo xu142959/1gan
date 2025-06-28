@@ -12,6 +12,8 @@ interface AuthModalProps {
 const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'login', onAuthSuccess }) => {
   const [mode, setMode] = useState<'login' | 'register'>(initialMode);
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -25,20 +27,48 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'l
       ...formData,
       [e.target.name]: e.target.value
     });
+    // Clear error when user starts typing
+    if (error) setError('');
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    
-    // Simulate successful authentication
-    if (onAuthSuccess) {
-      onAuthSuccess();
+    setLoading(true);
+    setError('');
+
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    if (mode === 'login') {
+      // Check test credentials
+      if (formData.email === 'admin' && formData.password === 'admin123') {
+        console.log('Login successful with test credentials');
+        if (onAuthSuccess) {
+          onAuthSuccess();
+        }
+      } else {
+        setError('用户名或密码错误。请使用测试账号：admin / admin123');
+      }
+    } else {
+      // Registration logic
+      if (formData.password !== formData.confirmPassword) {
+        setError('密码不匹配');
+      } else if (formData.password.length < 6) {
+        setError('密码至少需要6个字符');
+      } else {
+        console.log('Registration successful:', formData);
+        if (onAuthSuccess) {
+          onAuthSuccess();
+        }
+      }
     }
+
+    setLoading(false);
   };
 
   const switchMode = () => {
     setMode(mode === 'login' ? 'register' : 'login');
+    setError('');
     setFormData({
       firstName: '',
       lastName: '',
@@ -107,7 +137,26 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'l
                     : '创建账户开启你的直播之旅'
                   }
                 </p>
+                {mode === 'login' && (
+                  <div className="mt-4 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                    <p className="text-blue-400 text-sm">
+                      测试账号：<span className="font-mono">admin</span><br />
+                      测试密码：<span className="font-mono">admin123</span>
+                    </p>
+                  </div>
+                )}
               </div>
+
+              {/* Error Message */}
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mb-6 p-3 bg-red-500/10 border border-red-500/20 rounded-lg"
+                >
+                  <p className="text-red-400 text-sm">{error}</p>
+                </motion.div>
+              )}
 
               {/* Form */}
               <form onSubmit={handleSubmit} className="space-y-6">
@@ -151,9 +200,9 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'l
                 <div className="relative">
                   <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400" size={20} />
                   <input
-                    type="email"
+                    type={mode === 'login' ? 'text' : 'email'}
                     name="email"
-                    placeholder="邮箱地址"
+                    placeholder={mode === 'login' ? '用户名' : '邮箱地址'}
                     value={formData.email}
                     onChange={handleInputChange}
                     className="w-full bg-slate-800/50 border border-slate-700/50 rounded-xl pl-12 pr-4 py-4 text-white placeholder-slate-400 focus:border-red-400 focus:outline-none transition-colors"
@@ -215,10 +264,17 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'l
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   type="submit"
-                  className="w-full bg-red-500 text-white py-4 rounded-xl font-bold hover:bg-red-600 transition-colors flex items-center justify-center space-x-2"
+                  disabled={loading}
+                  className="w-full bg-red-500 text-white py-4 rounded-xl font-bold hover:bg-red-600 transition-colors flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <span>{mode === 'login' ? '登录' : '创建账户'}</span>
-                  <ArrowRight size={20} />
+                  {loading ? (
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      <span>{mode === 'login' ? '登录' : '创建账户'}</span>
+                      <ArrowRight size={20} />
+                    </>
+                  )}
                 </motion.button>
               </form>
 
