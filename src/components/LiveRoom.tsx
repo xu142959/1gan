@@ -80,7 +80,7 @@ const LiveRoom: React.FC<LiveRoomProps> = ({ onBackToHome }) => {
             <button className="text-slate-400 hover:text-white">
               <Settings size={20} />
             </button>
-            <div className="text-white">下一个主播 ></div>
+            <div className="text-white">下一个主播 &gt;</div>
             <div className="text-slate-400">分类</div>
           </div>
         </div>
