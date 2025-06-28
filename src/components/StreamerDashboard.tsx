@@ -30,7 +30,10 @@ import {
   Award,
   Target,
   Zap,
-  RefreshCw
+  RefreshCw,
+  ArrowRight,
+  Lightbulb,
+  Shield
 } from 'lucide-react';
 
 interface StreamerDashboardProps {
@@ -309,7 +312,7 @@ const StreamerDashboard: React.FC<StreamerDashboardProps> = ({ onBackToHome }) =
         </motion.div>
 
         {/* Promotional Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -373,11 +376,95 @@ const StreamerDashboard: React.FC<StreamerDashboardProps> = ({ onBackToHome }) =
           </motion.div>
         </div>
 
-        {/* Quick Actions */}
+        {/* Start Broadcasting Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
+          className="bg-gradient-to-r from-red-500 to-pink-600 rounded-xl p-8 mb-8 text-white relative overflow-hidden"
+        >
+          <div className="absolute inset-0 bg-black/10"></div>
+          <div className="relative z-10">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <div className="flex items-center space-x-3 mb-4">
+                  <Video className="text-white" size={32} />
+                  <h2 className="text-3xl font-bold">准备开播？</h2>
+                </div>
+                <p className="text-white/90 text-lg mb-6">
+                  学习相机和直播间创作获得更多收益！
+                </p>
+                <div className="flex items-center space-x-4">
+                  <button
+                    onClick={handleStartStream}
+                    disabled={isLive}
+                    className={`${isLive ? 'bg-white/20 cursor-not-allowed' : 'bg-white hover:bg-white/90'} text-red-600 px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 flex items-center space-x-3 shadow-lg`}
+                  >
+                    <Play size={24} />
+                    <span>{isLive ? '正在直播中' : '立即开播'}</span>
+                    {!isLive && <ArrowRight size={20} />}
+                  </button>
+                  
+                  <button className="bg-white/20 hover:bg-white/30 text-white px-6 py-4 rounded-xl font-medium transition-colors flex items-center space-x-2">
+                    <Lightbulb size={20} />
+                    <span>学习技巧</span>
+                  </button>
+                </div>
+              </div>
+              
+              <div className="hidden lg:block">
+                <div className="w-32 h-32 bg-white/20 rounded-full flex items-center justify-center">
+                  <Camera className="text-white" size={48} />
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Security Notice */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7 }}
+          className="bg-slate-800 rounded-xl p-6 mb-8 border border-red-500/20"
+        >
+          <div className="flex items-start space-x-4">
+            <div className="bg-red-500/20 p-3 rounded-full">
+              <Shield className="text-red-400" size={24} />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-white font-bold text-lg mb-2">注意</h3>
+              <div className="text-slate-300 space-y-2">
+                <p>• 运营者会有代币保护机制行为的保障</p>
+                <p>• 不要与任何人透露您的个人信息</p>
+                <p>• Stripchat官方管理员绝不会向您索取密码标识！</p>
+              </div>
+              <button className="mt-4 bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg transition-colors">
+                获得安全小贴士
+              </button>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Setup Live Stream Button */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8 }}
+          className="text-center"
+        >
+          <button className="bg-green-600 hover:bg-green-700 text-white px-12 py-4 rounded-xl font-bold text-xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center space-x-3 mx-auto">
+            <Settings size={24} />
+            <span>设置直播</span>
+            <ArrowRight size={20} />
+          </button>
+        </motion.div>
+
+        {/* Quick Actions */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.9 }}
           className="mt-8 bg-slate-800 rounded-xl p-6"
         >
           <h2 className="text-xl font-bold text-white mb-6">快速操作</h2>
