@@ -12,6 +12,10 @@ import PrivacySettingsPage from './components/PrivacySettingsPage';
 import NewStreamersPage from './components/NewStreamersPage';
 import HotStreamersPage from './components/HotStreamersPage';
 import VIPStreamersPage from './components/VIPStreamersPage';
+import UserProfilePage from './components/UserProfilePage';
+import MyFriendsPage from './components/MyFriendsPage';
+import NotificationsPage from './components/NotificationsPage';
+import SettingsPrivacyPage from './components/SettingsPrivacyPage';
 
 type ViewType = 
   | 'home' 
@@ -25,7 +29,11 @@ type ViewType =
   | 'privacy-settings'
   | 'new-streamers'
   | 'hot-streamers'
-  | 'vip-streamers';
+  | 'vip-streamers'
+  | 'user-profile'
+  | 'my-friends'
+  | 'notifications'
+  | 'settings-privacy';
 
 function App() {
   const [currentView, setCurrentView] = useState<ViewType>('home');
@@ -82,6 +90,22 @@ function App() {
 
   const navigateToVIPStreamers = () => {
     setCurrentView('vip-streamers');
+  };
+
+  const navigateToUserProfile = () => {
+    setCurrentView('user-profile');
+  };
+
+  const navigateToMyFriends = () => {
+    setCurrentView('my-friends');
+  };
+
+  const navigateToNotifications = () => {
+    setCurrentView('notifications');
+  };
+
+  const navigateToSettingsPrivacy = () => {
+    setCurrentView('settings-privacy');
   };
 
   return (
@@ -163,6 +187,26 @@ function App() {
           <VIPStreamersPage 
             onBackToHome={navigateToHome}
             onStreamClick={navigateToLive}
+          />
+        )}
+        {currentView === 'user-profile' && (
+          <UserProfilePage 
+            onBackToHome={navigateToHome}
+          />
+        )}
+        {currentView === 'my-friends' && (
+          <MyFriendsPage 
+            onBackToHome={navigateToHome}
+          />
+        )}
+        {currentView === 'notifications' && (
+          <NotificationsPage 
+            onBackToHome={navigateToHome}
+          />
+        )}
+        {currentView === 'settings-privacy' && (
+          <SettingsPrivacyPage 
+            onBackToHome={navigateToHome}
           />
         )}
       </div>

@@ -13,6 +13,10 @@ interface HomePageProps {
   onNewStreamersClick: () => void;
   onHotStreamersClick: () => void;
   onVIPStreamersClick: () => void;
+  onUserProfileClick?: () => void;
+  onMyFriendsClick?: () => void;
+  onNotificationsClick?: () => void;
+  onSettingsPrivacyClick?: () => void;
 }
 
 const HomePage: React.FC<HomePageProps> = ({ 
@@ -25,7 +29,11 @@ const HomePage: React.FC<HomePageProps> = ({
   onPrivacySettingsClick,
   onNewStreamersClick,
   onHotStreamersClick,
-  onVIPStreamersClick
+  onVIPStreamersClick,
+  onUserProfileClick,
+  onMyFriendsClick,
+  onNotificationsClick,
+  onSettingsPrivacyClick
 }) => {
   return (
     <div className="flex">

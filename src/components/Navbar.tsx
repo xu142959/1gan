@@ -5,6 +5,10 @@ import AuthModal from './AuthModal';
 
 interface NavbarProps {
   onLogoClick: () => void;
+  onUserProfileClick?: () => void;
+  onMyFriendsClick?: () => void;
+  onNotificationsClick?: () => void;
+  onSettingsPrivacyClick?: () => void;
 }
 
 const Logo: React.FC<{ onClick: () => void }> = ({ onClick }) => (
@@ -19,7 +23,13 @@ const Logo: React.FC<{ onClick: () => void }> = ({ onClick }) => (
   </button>
 );
 
-const Navbar: React.FC<NavbarProps> = ({ onLogoClick }) => {
+const Navbar: React.FC<NavbarProps> = ({ 
+  onLogoClick, 
+  onUserProfileClick,
+  onMyFriendsClick,
+  onNotificationsClick,
+  onSettingsPrivacyClick
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
@@ -45,6 +55,13 @@ const Navbar: React.FC<NavbarProps> = ({ onLogoClick }) => {
 
   const toggleUserDropdown = () => {
     setShowUserDropdown(!showUserDropdown);
+  };
+
+  const handleMenuItemClick = (action?: () => void) => {
+    setShowUserDropdown(false);
+    if (action) {
+      action();
+    }
   };
 
   // Close dropdown when clicking outside
@@ -171,7 +188,10 @@ const Navbar: React.FC<NavbarProps> = ({ onLogoClick }) => {
 
                         {/* Menu Items */}
                         <div className="py-2">
-                          <button className="w-full flex items-center space-x-3 px-4 py-2 text-slate-300 hover:bg-slate-700 hover:text-white transition-colors">
+                          <button 
+                            onClick={() => handleMenuItemClick(onUserProfileClick)}
+                            className="w-full flex items-center space-x-3 px-4 py-2 text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+                          >
                             <User size={16} />
                             <span className="text-sm">我的简历</span>
                           </button>
@@ -181,12 +201,18 @@ const Navbar: React.FC<NavbarProps> = ({ onLogoClick }) => {
                             <span className="text-sm">我的收藏</span>
                           </button>
                           
-                          <button className="w-full flex items-center space-x-3 px-4 py-2 text-slate-300 hover:bg-slate-700 hover:text-white transition-colors">
+                          <button 
+                            onClick={() => handleMenuItemClick(onMyFriendsClick)}
+                            className="w-full flex items-center space-x-3 px-4 py-2 text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+                          >
                             <Users size={16} />
                             <span className="text-sm">我的好友</span>
                           </button>
                           
-                          <button className="w-full flex items-center space-x-3 px-4 py-2 text-slate-300 hover:bg-slate-700 hover:text-white transition-colors">
+                          <button 
+                            onClick={() => handleMenuItemClick(onNotificationsClick)}
+                            className="w-full flex items-center space-x-3 px-4 py-2 text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+                          >
                             <Bell size={16} />
                             <span className="text-sm">我的通知</span>
                           </button>
@@ -212,7 +238,10 @@ const Navbar: React.FC<NavbarProps> = ({ onLogoClick }) => {
                             </div>
                           </button>
                           
-                          <button className="w-full flex items-center space-x-3 px-4 py-2 text-slate-300 hover:bg-slate-700 hover:text-white transition-colors">
+                          <button 
+                            onClick={() => handleMenuItemClick(onSettingsPrivacyClick)}
+                            className="w-full flex items-center space-x-3 px-4 py-2 text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+                          >
                             <Settings size={16} />
                             <span className="text-sm">设置和隐私</span>
                           </button>
@@ -220,7 +249,10 @@ const Navbar: React.FC<NavbarProps> = ({ onLogoClick }) => {
 
                         {/* Bottom Section */}
                         <div className="py-2 border-t border-slate-700">
-                          <button className="w-full flex items-center space-x-3 px-4 py-2 text-slate-300 hover:bg-slate-700 hover:text-white transition-colors">
+                          <button 
+                            onClick={() => handleMenuItemClick(onNotificationsClick)}
+                            className="w-full flex items-center space-x-3 px-4 py-2 text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+                          >
                             <RefreshCw size={16} />
                             <span className="text-sm">重要更新</span>
                           </button>
