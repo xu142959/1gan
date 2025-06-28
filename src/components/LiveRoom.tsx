@@ -80,7 +80,7 @@ const LiveRoom: React.FC<LiveRoomProps> = ({ onBackToHome }) => {
             <button className="text-slate-400 hover:text-white">
               <Settings size={20} />
             </button>
-            <div className="text-white">下一个主播 &gt;</div>
+            <div className="text-white">下一个主播 ></div>
             <div className="text-slate-400">分类</div>
           </div>
         </div>
@@ -104,22 +104,6 @@ const LiveRoom: React.FC<LiveRoomProps> = ({ onBackToHome }) => {
               alt="Live Stream"
               className="w-full h-full object-cover"
             />
-            
-            {/* Tip Goals Overlay */}
-            <div className="absolute top-4 right-4 bg-black/70 backdrop-blur-sm rounded-lg p-4 text-white">
-              <div className="text-center mb-2">
-                <div className="text-2xl font-bold">why1000</div>
-                <div className="text-sm text-slate-300">存: 5000</div>
-              </div>
-              <div className="grid grid-cols-5 gap-2 text-xs">
-                {tipGoals.map((goal) => (
-                  <div key={goal.id} className="text-center">
-                    <div className="font-bold">{goal.id}号{goal.name}</div>
-                    <div className="text-yellow-400">{goal.amount}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
 
             {/* Video Controls */}
             <div className="absolute bottom-4 left-4 flex items-center space-x-2">
