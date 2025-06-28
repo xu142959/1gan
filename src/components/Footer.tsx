@@ -1,44 +1,45 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Twitter, Facebook, Instagram, Linkedin, Globe } from 'lucide-react';
+import { Twitter, Facebook, Instagram, Youtube, Globe } from 'lucide-react';
 
 const Logo = () => (
-  <div className="w-10 h-10">
-    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24">
-      <path fill="none" stroke="white" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19H6a3 3 0 0 1-3-3V8a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v4.5M3 10h18m-5 9h6m-3-3l3 3l-3 3M7.005 15h.005M11 15h2"/>
-    </svg>
+  <div className="flex items-center space-x-2">
+    <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-pink-600 rounded-lg flex items-center justify-center">
+      <div className="w-3 h-3 bg-white rounded-full"></div>
+    </div>
+    <span className="text-white font-bold text-xl">StreamFlow</span>
   </div>
 );
 
 const Footer = () => {
   const footerLinks = {
-    'Send money': [
-      'Send money online',
-      'Send money to India',
-      'Send money to Philippines',
-      'Send money to Mexico',
-      'Send money to Pakistan'
+    '产品': [
+      '直播功能',
+      '移动应用',
+      '桌面版本',
+      '开发者API',
+      '企业解决方案'
     ],
-    'Receive money': [
-      'Receive money online',
-      'Get account details',
-      'Multi-currency account',
-      'Large amount transfers',
-      'International wire'
+    '社区': [
+      '创作者中心',
+      '帮助中心',
+      '社区指南',
+      '安全中心',
+      '举报问题'
     ],
-    'FlowPay card': [
-      'Debit card',
-      'Card for travel',
-      'Card for business',
-      'ATM withdrawals',
-      'Card fees'
+    '公司': [
+      '关于我们',
+      '招聘信息',
+      '新闻中心',
+      '投资者关系',
+      '合作伙伴'
     ],
-    'Company': [
-      'About us',
-      'Careers',
-      'News',
-      'Mission',
-      'Investor relations'
+    '支持': [
+      '联系我们',
+      '技术支持',
+      '状态页面',
+      '系统要求',
+      '反馈建议'
     ]
   };
 
@@ -48,22 +49,19 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8 mb-12">
           {/* Brand */}
           <div className="lg:col-span-2">
-            <div className="flex items-center space-x-3 mb-6">
-              <Logo />
-              <span className="text-white font-semibold text-xl">FlowPay</span>
-            </div>
-            <p className="text-slate-400 mb-6 leading-relaxed">
-              Making money without borders the new normal. 
-              We're building the best way to move and manage 
-              the world's money.
+            <Logo />
+            <p className="text-slate-400 mb-6 mt-4 leading-relaxed">
+              StreamFlow 是全球领先的直播平台，
+              为创作者和观众提供最佳的直播体验。
+              让每个人都能分享自己的精彩时刻。
             </p>
             <div className="flex items-center space-x-4">
-              {[Twitter, Facebook, Instagram, Linkedin].map((Icon, index) => (
+              {[Twitter, Facebook, Instagram, Youtube].map((Icon, index) => (
                 <motion.a
                   key={index}
                   href="#"
                   whileHover={{ scale: 1.1, y: -2 }}
-                  className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center text-slate-400 hover:text-lime-400 hover:bg-slate-700 transition-all duration-300"
+                  className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center text-slate-400 hover:text-red-400 hover:bg-slate-700 transition-all duration-300"
                 >
                   <Icon size={18} />
                 </motion.a>
@@ -74,7 +72,7 @@ const Footer = () => {
           {/* Links */}
           {Object.entries(footerLinks).map(([category, links]) => (
             <div key={category}>
-              <h3 className="text-white font-semibold mb-4">{category}</h3>
+              <h3 className="text-white font-bold mb-4">{category}</h3>
               <ul className="space-y-3">
                 {links.map((link, index) => (
                   <li key={index}>
@@ -97,25 +95,26 @@ const Footer = () => {
               <div className="flex items-center space-x-2 text-slate-400">
                 <Globe size={16} />
                 <select className="bg-transparent text-slate-400 text-sm focus:outline-none">
+                  <option>简体中文</option>
                   <option>English</option>
-                  <option>Español</option>
-                  <option>Français</option>
+                  <option>日本語</option>
+                  <option>한국어</option>
                 </select>
               </div>
               <div className="text-slate-400 text-sm">
-                © 2024 FlowPay
+                © 2024 StreamFlow
               </div>
             </div>
 
             <div className="flex items-center space-x-6 text-slate-400 text-sm">
               <a href="#" className="hover:text-white transition-colors">
-                Privacy policy
+                隐私政策
               </a>
               <a href="#" className="hover:text-white transition-colors">
-                Terms of use
+                服务条款
               </a>
               <a href="#" className="hover:text-white transition-colors">
-                Cookies
+                Cookie 政策
               </a>
             </div>
           </div>

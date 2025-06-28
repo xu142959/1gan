@@ -28,7 +28,6 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'l
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission logic here
     console.log('Form submitted:', formData);
   };
 
@@ -66,10 +65,10 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'l
               <motion.div
                 animate={{
                   background: [
-                    "radial-gradient(circle at 20% 20%, rgba(225, 252, 2, 0.05) 0%, transparent 50%)",
-                    "radial-gradient(circle at 80% 80%, rgba(225, 252, 2, 0.05) 0%, transparent 50%)",
-                    "radial-gradient(circle at 20% 80%, rgba(225, 252, 2, 0.05) 0%, transparent 50%)",
-                    "radial-gradient(circle at 20% 20%, rgba(225, 252, 2, 0.05) 0%, transparent 50%)"
+                    "radial-gradient(circle at 20% 20%, rgba(239, 68, 68, 0.05) 0%, transparent 50%)",
+                    "radial-gradient(circle at 80% 80%, rgba(239, 68, 68, 0.05) 0%, transparent 50%)",
+                    "radial-gradient(circle at 20% 80%, rgba(239, 68, 68, 0.05) 0%, transparent 50%)",
+                    "radial-gradient(circle at 20% 20%, rgba(239, 68, 68, 0.05) 0%, transparent 50%)"
                   ]
                 }}
                 transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
@@ -92,14 +91,14 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'l
                   key={mode}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="text-3xl font-light text-white mb-2"
+                  className="text-3xl font-bold text-white mb-2"
                 >
-                  {mode === 'login' ? 'Welcome back' : 'Join FlowPay'}
+                  {mode === 'login' ? '欢迎回来' : '加入 StreamFlow'}
                 </motion.h2>
                 <p className="text-slate-400">
                   {mode === 'login' 
-                    ? 'Sign in to your account' 
-                    : 'Create your account to get started'
+                    ? '登录你的账户开始直播' 
+                    : '创建账户开启你的直播之旅'
                   }
                 </p>
               </div>
@@ -119,10 +118,10 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'l
                         <input
                           type="text"
                           name="firstName"
-                          placeholder="First name"
+                          placeholder="名字"
                           value={formData.firstName}
                           onChange={handleInputChange}
-                          className="w-full bg-slate-800/50 border border-slate-700/50 rounded-xl pl-12 pr-4 py-4 text-white placeholder-slate-400 focus:border-lime-400 focus:outline-none transition-colors"
+                          className="w-full bg-slate-800/50 border border-slate-700/50 rounded-xl pl-12 pr-4 py-4 text-white placeholder-slate-400 focus:border-red-400 focus:outline-none transition-colors"
                           required
                         />
                       </div>
@@ -131,10 +130,10 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'l
                         <input
                           type="text"
                           name="lastName"
-                          placeholder="Last name"
+                          placeholder="姓氏"
                           value={formData.lastName}
                           onChange={handleInputChange}
-                          className="w-full bg-slate-800/50 border border-slate-700/50 rounded-xl pl-12 pr-4 py-4 text-white placeholder-slate-400 focus:border-lime-400 focus:outline-none transition-colors"
+                          className="w-full bg-slate-800/50 border border-slate-700/50 rounded-xl pl-12 pr-4 py-4 text-white placeholder-slate-400 focus:border-red-400 focus:outline-none transition-colors"
                           required
                         />
                       </div>
@@ -147,10 +146,10 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'l
                   <input
                     type="email"
                     name="email"
-                    placeholder="Email address"
+                    placeholder="邮箱地址"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className="w-full bg-slate-800/50 border border-slate-700/50 rounded-xl pl-12 pr-4 py-4 text-white placeholder-slate-400 focus:border-lime-400 focus:outline-none transition-colors"
+                    className="w-full bg-slate-800/50 border border-slate-700/50 rounded-xl pl-12 pr-4 py-4 text-white placeholder-slate-400 focus:border-red-400 focus:outline-none transition-colors"
                     required
                   />
                 </div>
@@ -160,10 +159,10 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'l
                   <input
                     type={showPassword ? 'text' : 'password'}
                     name="password"
-                    placeholder="Password"
+                    placeholder="密码"
                     value={formData.password}
                     onChange={handleInputChange}
-                    className="w-full bg-slate-800/50 border border-slate-700/50 rounded-xl pl-12 pr-12 py-4 text-white placeholder-slate-400 focus:border-lime-400 focus:outline-none transition-colors"
+                    className="w-full bg-slate-800/50 border border-slate-700/50 rounded-xl pl-12 pr-12 py-4 text-white placeholder-slate-400 focus:border-red-400 focus:outline-none transition-colors"
                     required
                   />
                   <button
@@ -185,10 +184,10 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'l
                     <input
                       type={showPassword ? 'text' : 'password'}
                       name="confirmPassword"
-                      placeholder="Confirm password"
+                      placeholder="确认密码"
                       value={formData.confirmPassword}
                       onChange={handleInputChange}
-                      className="w-full bg-slate-800/50 border border-slate-700/50 rounded-xl pl-12 pr-4 py-4 text-white placeholder-slate-400 focus:border-lime-400 focus:outline-none transition-colors"
+                      className="w-full bg-slate-800/50 border border-slate-700/50 rounded-xl pl-12 pr-4 py-4 text-white placeholder-slate-400 focus:border-red-400 focus:outline-none transition-colors"
                       required
                     />
                   </motion.div>
@@ -198,9 +197,9 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'l
                   <div className="flex justify-end">
                     <button
                       type="button"
-                      className="text-lime-400 hover:text-lime-300 text-sm transition-colors"
+                      className="text-red-400 hover:text-red-300 text-sm transition-colors"
                     >
-                      Forgot password?
+                      忘记密码？
                     </button>
                   </div>
                 )}
@@ -209,9 +208,9 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'l
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   type="submit"
-                  className="w-full bg-lime-400 text-slate-900 py-4 rounded-xl font-semibold hover:bg-lime-300 transition-colors flex items-center justify-center space-x-2"
+                  className="w-full bg-red-500 text-white py-4 rounded-xl font-bold hover:bg-red-600 transition-colors flex items-center justify-center space-x-2"
                 >
-                  <span>{mode === 'login' ? 'Sign in' : 'Create account'}</span>
+                  <span>{mode === 'login' ? '登录' : '创建账户'}</span>
                   <ArrowRight size={20} />
                 </motion.button>
               </form>
@@ -219,7 +218,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'l
               {/* Divider */}
               <div className="flex items-center my-8">
                 <div className="flex-1 h-px bg-slate-700"></div>
-                <span className="px-4 text-slate-400 text-sm">or</span>
+                <span className="px-4 text-slate-400 text-sm">或</span>
                 <div className="flex-1 h-px bg-slate-700"></div>
               </div>
 
@@ -231,7 +230,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'l
                   className="w-full bg-slate-800/50 border border-slate-700/50 text-white py-4 rounded-xl hover:bg-slate-800 transition-colors flex items-center justify-center space-x-3"
                 >
                   <div className="w-5 h-5 bg-white rounded flex items-center justify-center text-xs">G</div>
-                  <span>Continue with Google</span>
+                  <span>使用 Google 继续</span>
                 </motion.button>
 
                 <motion.button
@@ -239,21 +238,21 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'l
                   whileTap={{ scale: 0.98 }}
                   className="w-full bg-slate-800/50 border border-slate-700/50 text-white py-4 rounded-xl hover:bg-slate-800 transition-colors flex items-center justify-center space-x-3"
                 >
-                  <div className="w-5 h-5 bg-black rounded flex items-center justify-center text-white text-xs">🍎</div>
-                  <span>Continue with Apple</span>
+                  <div className="w-5 h-5 bg-blue-500 rounded flex items-center justify-center text-white text-xs">f</div>
+                  <span>使用 Facebook 继续</span>
                 </motion.button>
               </div>
 
               {/* Switch Mode */}
               <div className="text-center mt-8">
                 <span className="text-slate-400">
-                  {mode === 'login' ? "Don't have an account? " : "Already have an account? "}
+                  {mode === 'login' ? "还没有账户？ " : "已有账户？ "}
                 </span>
                 <button
                   onClick={switchMode}
-                  className="text-lime-400 hover:text-lime-300 font-medium transition-colors"
+                  className="text-red-400 hover:text-red-300 font-bold transition-colors"
                 >
-                  {mode === 'login' ? 'Sign up' : 'Sign in'}
+                  {mode === 'login' ? '立即注册' : '立即登录'}
                 </button>
               </div>
 
@@ -264,10 +263,10 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'l
                   className="text-center mt-6"
                 >
                   <p className="text-slate-400 text-xs leading-relaxed">
-                    By creating an account, you agree to our{' '}
-                    <a href="#" className="text-lime-400 hover:text-lime-300">Terms of Service</a>{' '}
-                    and{' '}
-                    <a href="#" className="text-lime-400 hover:text-lime-300">Privacy Policy</a>
+                    创建账户即表示你同意我们的{' '}
+                    <a href="#" className="text-red-400 hover:text-red-300">服务条款</a>{' '}
+                    和{' '}
+                    <a href="#" className="text-red-400 hover:text-red-300">隐私政策</a>
                   </p>
                 </motion.div>
               )}
