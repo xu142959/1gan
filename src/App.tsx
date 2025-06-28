@@ -3,9 +3,11 @@ import Navbar from './components/Navbar';
 import LiveRoom from './components/LiveRoom';
 import HomePage from './components/HomePage';
 import CategoriesPage from './components/CategoriesPage';
+import CategoryViewPage from './components/CategoryViewPage';
 
 function App() {
-  const [currentView, setCurrentView] = useState<'home' | 'live' | 'categories'>('home');
+  const [currentView, setCurrentView] = useState<'home' | 'live' | 'categories' | 'category-view'>('home');
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
 
   const navigateToHome = () => {
     setCurrentView('home');
@@ -16,6 +18,15 @@ function App() {
   };
 
   const navigateToCategories = () => {
+    setCurrentView('categories');
+  };
+
+  const navigateToCategoryView = (categoryName: string) => {
+    setSelectedCategory(categoryName);
+    setCurrentView('category-view');
+  };
+
+  const navigateBackToCategories = () => {
     setCurrentView('categories');
   };
 
@@ -30,7 +41,17 @@ function App() {
           <LiveRoom onBackToHome={navigateToHome} />
         )}
         {currentView === 'categories' && (
-          <CategoriesPage onBackToHome={navigateToHome} />
+          <CategoriesPage 
+            onBackToHome={navigateToHome} 
+            onCategoryClick={navigateToCategoryView}
+          />
+        )}
+        {currentView === 'category-view' && (
+          <CategoryViewPage 
+            categoryName={selectedCategory}
+            onBackToCategories={navigateBackToCategories}
+            onStreamClick={navigateToLive}
+          />
         )}
       </div>
     </div>

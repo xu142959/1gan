@@ -10,9 +10,10 @@ import {
 
 interface CategoriesPageProps {
   onBackToHome: () => void;
+  onCategoryClick: (categoryName: string) => void;
 }
 
-const CategoriesPage: React.FC<CategoriesPageProps> = ({ onBackToHome }) => {
+const CategoriesPage: React.FC<CategoriesPageProps> = ({ onBackToHome, onCategoryClick }) => {
   const [searchTerm, setSearchTerm] = useState('');
 
   // 外貌分类
@@ -127,6 +128,10 @@ const CategoriesPage: React.FC<CategoriesPageProps> = ({ onBackToHome }) => {
     );
   };
 
+  const handleCategoryClick = (categoryName: string) => {
+    onCategoryClick(categoryName);
+  };
+
   return (
     <div className="min-h-screen bg-slate-900">
       {/* Header */}
@@ -186,6 +191,7 @@ const CategoriesPage: React.FC<CategoriesPageProps> = ({ onBackToHome }) => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.02 }}
                 whileHover={{ scale: 1.02, backgroundColor: 'rgb(51, 65, 85)' }}
+                onClick={() => handleCategoryClick(category.label)}
                 className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-3 rounded-lg text-left transition-all duration-200"
               >
                 <div className="font-medium text-sm">{category.label}</div>
@@ -211,6 +217,7 @@ const CategoriesPage: React.FC<CategoriesPageProps> = ({ onBackToHome }) => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.02 }}
                 whileHover={{ scale: 1.02, backgroundColor: 'rgb(51, 65, 85)' }}
+                onClick={() => handleCategoryClick(category.label)}
                 className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-3 rounded-lg text-left transition-all duration-200"
               >
                 <div className="font-medium text-sm">{category.label}</div>
@@ -236,6 +243,7 @@ const CategoriesPage: React.FC<CategoriesPageProps> = ({ onBackToHome }) => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.02 }}
                 whileHover={{ scale: 1.02, backgroundColor: 'rgb(51, 65, 85)' }}
+                onClick={() => handleCategoryClick(category.label)}
                 className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-3 rounded-lg text-left transition-all duration-200"
               >
                 <div className="font-medium text-sm">{category.label}</div>
@@ -261,6 +269,7 @@ const CategoriesPage: React.FC<CategoriesPageProps> = ({ onBackToHome }) => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.02 }}
                 whileHover={{ scale: 1.02, backgroundColor: 'rgb(51, 65, 85)' }}
+                onClick={() => handleCategoryClick(category.label)}
                 className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-3 rounded-lg text-left transition-all duration-200"
               >
                 <div className="font-medium text-sm">{category.label}</div>
@@ -290,6 +299,7 @@ const CategoriesPage: React.FC<CategoriesPageProps> = ({ onBackToHome }) => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.02 }}
                 whileHover={{ scale: 1.02, backgroundColor: 'rgb(51, 65, 85)' }}
+                onClick={() => handleCategoryClick(category.label)}
                 className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-3 rounded-lg text-left transition-all duration-200"
               >
                 <div className="font-medium text-sm">{category.label}</div>
