@@ -4,12 +4,13 @@ import LiveGrid from './LiveGrid';
 
 interface HomePageProps {
   onStreamClick: () => void;
+  onCategoriesClick: () => void;
 }
 
-const HomePage: React.FC<HomePageProps> = ({ onStreamClick }) => {
+const HomePage: React.FC<HomePageProps> = ({ onStreamClick, onCategoriesClick }) => {
   return (
     <div className="flex">
-      <Sidebar />
+      <Sidebar onCategoriesClick={onCategoriesClick} />
       <div className="flex-1 ml-64">
         <LiveGrid onStreamClick={onStreamClick} />
       </div>
