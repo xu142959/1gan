@@ -7,12 +7,7 @@ import {
   Users, 
   Settings, 
   Crown,
-  Gamepad2,
-  Music,
-  ChefHat,
-  Camera,
-  Dumbbell,
-  GraduationCap
+  Globe
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -25,13 +20,34 @@ const Sidebar = () => {
     { icon: Settings, label: '隐私配置' }
   ];
 
-  const categories = [
-    { icon: Users, label: '中文', count: 162, color: 'bg-red-500' },
-    { icon: Crown, label: '白俄罗斯女主播', count: 1519, color: 'bg-white' },
+  const countries = [
+    { flag: '🇨🇳', label: '中国', count: 1625 },
+    { flag: '🇺🇸', label: '美国', count: 2847 },
+    { flag: '🇷🇺', label: '俄罗斯', count: 1519 },
+    { flag: '🇯🇵', label: '日本', count: 892 },
+    { flag: '🇰🇷', label: '韩国', count: 756 },
+    { flag: '🇬🇧', label: '英国', count: 634 },
+    { flag: '🇩🇪', label: '德国', count: 523 },
+    { flag: '🇫🇷', label: '法国', count: 467 },
+    { flag: '🇮🇹', label: '意大利', count: 389 },
+    { flag: '🇪🇸', label: '西班牙', count: 356 },
+    { flag: '🇧🇷', label: '巴西', count: 445 },
+    { flag: '🇦🇷', label: '阿根廷', count: 234 },
+    { flag: '🇲🇽', label: '墨西哥', count: 312 },
+    { flag: '🇨🇦', label: '加拿大', count: 289 },
+    { flag: '🇦🇺', label: '澳大利亚', count: 198 },
+    { flag: '🇮🇳', label: '印度', count: 567 },
+    { flag: '🇹🇭', label: '泰国', count: 423 },
+    { flag: '🇻🇳', label: '越南', count: 345 },
+    { flag: '🇵🇭', label: '菲律宾', count: 278 },
+    { flag: '🇮🇩', label: '印度尼西亚', count: 234 }
+  ];
+
+  const specialCategories = [
     { icon: Star, label: '新主播', count: 646, color: 'bg-blue-500' },
-    { icon: Camera, label: 'VR 直播头', count: 160, color: 'bg-purple-500' },
-    { icon: Heart, label: '虚恋', count: 66, color: 'bg-black' },
-    { icon: Gamepad2, label: '南美女演', count: 121, color: 'bg-green-500' }
+    { icon: Crown, label: 'VIP 直播间', count: 160, color: 'bg-purple-500' },
+    { icon: Heart, label: '虚恋', count: 66, color: 'bg-pink-500' },
+    { icon: Globe, label: '多语言', count: 121, color: 'bg-green-500' }
   ];
 
   const ageGroups = [
@@ -73,13 +89,13 @@ const Sidebar = () => {
           ))}
         </nav>
 
-        {/* Categories */}
+        {/* Special Categories */}
         <div className="mb-8">
           <h3 className="text-slate-400 text-sm font-medium mb-4 uppercase tracking-wider">
             特别
           </h3>
           <div className="space-y-2">
-            {categories.map((category, index) => (
+            {specialCategories.map((category, index) => (
               <motion.a
                 key={index}
                 href="#"
@@ -89,6 +105,27 @@ const Sidebar = () => {
                 <div className={`w-3 h-3 rounded-full ${category.color}`} />
                 <span className="flex-1 text-sm">{category.label}</span>
                 <span className="text-xs text-slate-400">{category.count}</span>
+              </motion.a>
+            ))}
+          </div>
+        </div>
+
+        {/* Countries */}
+        <div className="mb-8">
+          <h3 className="text-slate-400 text-sm font-medium mb-4 uppercase tracking-wider">
+            国家/地区
+          </h3>
+          <div className="space-y-1 max-h-80 overflow-y-auto">
+            {countries.map((country, index) => (
+              <motion.a
+                key={index}
+                href="#"
+                whileHover={{ x: 5 }}
+                className="flex items-center space-x-3 px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+              >
+                <span className="text-lg">{country.flag}</span>
+                <span className="flex-1 text-sm">{country.label}</span>
+                <span className="text-xs text-slate-400">{country.count}</span>
               </motion.a>
             ))}
           </div>
