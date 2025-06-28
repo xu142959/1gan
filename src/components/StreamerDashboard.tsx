@@ -122,7 +122,7 @@ const StreamerDashboard: React.FC<StreamerDashboardProps> = ({ onBackToHome }) =
             
             <div className="flex items-center space-x-4">
               <div className="text-slate-400 text-sm">
-                想要赚钱吗？分享你的直播录像到"我的直播设置">"我的直播设置">"录制节目"
+                想要赚钱吗？分享你的直播录像到"我的直播设置"&gt;"我的直播设置"&gt;"录制节目"
               </div>
             </div>
           </div>
