@@ -20,31 +20,32 @@ const Sidebar = () => {
     { icon: Settings, label: '隐私配置' }
   ];
 
-  const countries = [
-    { flag: '🇨🇳', label: '中国', count: 1625 },
-    { flag: '🇺🇸', label: '美国', count: 2847 },
-    { flag: '🇷🇺', label: '俄罗斯', count: 1519 },
-    { flag: '🇯🇵', label: '日本', count: 892 },
-    { flag: '🇰🇷', label: '韩国', count: 756 },
-    { flag: '🇬🇧', label: '英国', count: 634 },
-    { flag: '🇩🇪', label: '德国', count: 523 },
-    { flag: '🇫🇷', label: '法国', count: 467 },
-    { flag: '🇮🇹', label: '意大利', count: 389 },
-    { flag: '🇪🇸', label: '西班牙', count: 356 },
-    { flag: '🇧🇷', label: '巴西', count: 445 },
-    { flag: '🇦🇷', label: '阿根廷', count: 234 },
-    { flag: '🇲🇽', label: '墨西哥', count: 312 },
-    { flag: '🇨🇦', label: '加拿大', count: 289 },
-    { flag: '🇦🇺', label: '澳大利亚', count: 198 },
-    { flag: '🇮🇳', label: '印度', count: 567 },
-    { flag: '🇹🇭', label: '泰国', count: 423 },
-    { flag: '🇻🇳', label: '越南', count: 345 },
-    { flag: '🇵🇭', label: '菲律宾', count: 278 },
-    { flag: '🇮🇩', label: '印度尼西亚', count: 234 }
-  ];
-
-  const specialCategories = [
-    { icon: Star, label: '新主播', count: 646, color: 'bg-blue-500' }
+  // 合并所有分类到一个列表
+  const allCategories = [
+    // 特别分类
+    { type: 'special', icon: Star, label: '新主播', count: 646, color: 'bg-blue-500' },
+    
+    // 国家/地区分类
+    { type: 'country', flag: '🇨🇳', label: '中国', count: 1625 },
+    { type: 'country', flag: '🇺🇸', label: '美国', count: 2847 },
+    { type: 'country', flag: '🇷🇺', label: '俄罗斯', count: 1519 },
+    { type: 'country', flag: '🇯🇵', label: '日本', count: 892 },
+    { type: 'country', flag: '🇰🇷', label: '韩国', count: 756 },
+    { type: 'country', flag: '🇬🇧', label: '英国', count: 634 },
+    { type: 'country', flag: '🇩🇪', label: '德国', count: 523 },
+    { type: 'country', flag: '🇫🇷', label: '法国', count: 467 },
+    { type: 'country', flag: '🇮🇹', label: '意大利', count: 389 },
+    { type: 'country', flag: '🇪🇸', label: '西班牙', count: 356 },
+    { type: 'country', flag: '🇧🇷', label: '巴西', count: 445 },
+    { type: 'country', flag: '🇦🇷', label: '阿根廷', count: 234 },
+    { type: 'country', flag: '🇲🇽', label: '墨西哥', count: 312 },
+    { type: 'country', flag: '🇨🇦', label: '加拿大', count: 289 },
+    { type: 'country', flag: '🇦🇺', label: '澳大利亚', count: 198 },
+    { type: 'country', flag: '🇮🇳', label: '印度', count: 567 },
+    { type: 'country', flag: '🇹🇭', label: '泰国', count: 423 },
+    { type: 'country', flag: '🇻🇳', label: '越南', count: 345 },
+    { type: 'country', flag: '🇵🇭', label: '菲律宾', count: 278 },
+    { type: 'country', flag: '🇮🇩', label: '印度尼西亚', count: 234 }
   ];
 
   return (
@@ -78,43 +79,26 @@ const Sidebar = () => {
           ))}
         </nav>
 
-        {/* Special Categories */}
+        {/* 统一分类列表 */}
         <div className="mb-8">
           <h3 className="text-slate-400 text-sm font-medium mb-4 uppercase tracking-wider">
-            特别
+            分类
           </h3>
-          <div className="space-y-2">
-            {specialCategories.map((category, index) => (
+          <div className="space-y-1 max-h-96 overflow-y-auto">
+            {allCategories.map((category, index) => (
               <motion.a
                 key={index}
                 href="#"
                 whileHover={{ x: 5 }}
                 className="flex items-center space-x-3 px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
               >
-                <div className={`w-3 h-3 rounded-full ${category.color}`} />
+                {category.type === 'special' ? (
+                  <div className={`w-3 h-3 rounded-full ${category.color}`} />
+                ) : (
+                  <span className="text-lg">{category.flag}</span>
+                )}
                 <span className="flex-1 text-sm">{category.label}</span>
                 <span className="text-xs text-slate-400">{category.count}</span>
-              </motion.a>
-            ))}
-          </div>
-        </div>
-
-        {/* Countries */}
-        <div className="mb-8">
-          <h3 className="text-slate-400 text-sm font-medium mb-4 uppercase tracking-wider">
-            国家/地区
-          </h3>
-          <div className="space-y-1 max-h-80 overflow-y-auto">
-            {countries.map((country, index) => (
-              <motion.a
-                key={index}
-                href="#"
-                whileHover={{ x: 5 }}
-                className="flex items-center space-x-3 px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
-              >
-                <span className="text-lg">{country.flag}</span>
-                <span className="flex-1 text-sm">{country.label}</span>
-                <span className="text-xs text-slate-400">{country.count}</span>
               </motion.a>
             ))}
           </div>
