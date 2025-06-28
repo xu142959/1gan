@@ -108,6 +108,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'l
                 <AnimatePresence mode="wait">
                   {mode === 'register' && (
                     <motion.div
+                      key="register-fields"
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: 'auto' }}
                       exit={{ opacity: 0, height: 0 }}
