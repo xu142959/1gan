@@ -50,14 +50,6 @@ const Sidebar = () => {
     { icon: Globe, label: '多语言', count: 121, color: 'bg-green-500' }
   ];
 
-  const ageGroups = [
-    { label: '少女 18+', count: 1419 },
-    { label: '辣妈青年 22+', count: 3291 },
-    { label: '熟女', count: 826 },
-    { label: '成熟', count: 379 },
-    { label: '老奶奶', count: 35 }
-  ];
-
   return (
     <motion.aside
       initial={{ x: -300 }}
@@ -126,26 +118,6 @@ const Sidebar = () => {
                 <span className="text-lg">{country.flag}</span>
                 <span className="flex-1 text-sm">{country.label}</span>
                 <span className="text-xs text-slate-400">{country.count}</span>
-              </motion.a>
-            ))}
-          </div>
-        </div>
-
-        {/* Age Groups */}
-        <div className="mb-8">
-          <h3 className="text-slate-400 text-sm font-medium mb-4 uppercase tracking-wider">
-            年龄
-          </h3>
-          <div className="space-y-2">
-            {ageGroups.map((group, index) => (
-              <motion.a
-                key={index}
-                href="#"
-                whileHover={{ x: 5 }}
-                className="flex items-center justify-between px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
-              >
-                <span className="text-sm">{group.label}</span>
-                <span className="text-xs text-slate-400">{group.count}</span>
               </motion.a>
             ))}
           </div>
