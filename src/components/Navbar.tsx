@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Menu, X, Search, Bell, User, Settings, Gift } from 'lucide-react';
+import { Menu, X, Search, Bell, User, Gift } from 'lucide-react';
 import AuthModal from './AuthModal';
 
 interface NavbarProps {
@@ -60,9 +60,6 @@ const Navbar: React.FC<NavbarProps> = ({ onLogoClick }) => {
 
             {/* Right Side */}
             <div className="flex items-center space-x-4">
-              <button className="text-white hover:text-red-200 transition-colors">
-                <Settings size={20} />
-              </button>
               <button className="text-white hover:text-red-200 transition-colors">
                 <Bell size={20} />
               </button>
