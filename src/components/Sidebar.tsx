@@ -44,10 +44,7 @@ const Sidebar = () => {
   ];
 
   const specialCategories = [
-    { icon: Star, label: '新主播', count: 646, color: 'bg-blue-500' },
-    { icon: Crown, label: 'VIP 直播间', count: 160, color: 'bg-purple-500' },
-    { icon: Heart, label: '虚恋', count: 66, color: 'bg-pink-500' },
-    { icon: Globe, label: '多语言', count: 121, color: 'bg-green-500' }
+    { icon: Star, label: '新主播', count: 646, color: 'bg-blue-500' }
   ];
 
   return (
