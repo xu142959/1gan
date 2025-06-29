@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
-  ArrowLeft, 
   Users, 
   Video, 
   BarChart3, 
@@ -39,10 +38,17 @@ import {
   PieChart,
   Target,
   Award,
-  User,
-  Lock
+  CreditCard,
+  Receipt,
+  ArrowUpRight,
+  ArrowDownRight,
+  AlertCircle,
+  TrendingDown,
+  Wallet,
+  Building,
+  Calendar as CalendarIcon,
+  ExternalLink
 } from 'lucide-react';
-import AuthModal from './AuthModal';
 
 interface AdminDashboardProps {
   onBackToHome: () => void;
@@ -54,43 +60,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome }) => {
   const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
   const [showUserModal, setShowUserModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<any>(null);
-  
-  // Authentication states
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
-
-  // Check authentication and admin status on component mount
-  useEffect(() => {
-    const checkAuth = () => {
-      // Simulate checking authentication status
-      // In a real app, this would check JWT token, session, etc.
-      const token = localStorage.getItem('authToken');
-      const userRole = localStorage.getItem('userRole');
-      
-      if (token) {
-        setIsLoggedIn(true);
-        // Check if user is admin
-        if (userRole === 'admin') {
-          setIsAdmin(true);
-        }
-      }
-      
-      setLoading(false);
-    };
-
-    checkAuth();
-  }, []);
-
-  const handleAuthSuccess = () => {
-    // Simulate successful login with admin privileges
-    localStorage.setItem('authToken', 'mock-token');
-    localStorage.setItem('userRole', 'admin');
-    setIsLoggedIn(true);
-    setIsAdmin(true);
-    setAuthModalOpen(false);
-  };
+  const [showTransactionModal, setShowTransactionModal] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] = useState<any>(null);
 
   // 模拟数据
   const [stats, setStats] = useState({
@@ -101,8 +72,83 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome }) => {
     totalRevenue: 125847.50,
     todayRevenue: 3247.80,
     totalMessages: 89234,
-    todayMessages: 1247
+    todayMessages: 1247,
+    // 支付相关统计
+    totalTransactions: 45623,
+    todayTransactions: 234,
+    totalRefunds: 1247,
+    pendingPayouts: 15420.30,
+    averageTransactionValue: 27.50,
+    paymentSuccessRate: 98.5
   });
+
+  // 支付交易数据
+  const [transactions, setTransactions] = useState([
+    {
+      id: 'TXN-2024-001234',
+      userId: 1,
+      username: 'user123',
+      type: 'token_purchase',
+      amount: 99.99,
+      tokens: 1000,
+      status: 'completed',
+      paymentMethod: 'credit_card',
+      cardLast4: '4242',
+      timestamp: '2024-01-15 14:30:25',
+      description: '购买1000代币',
+      fees: 2.99,
+      netAmount: 97.00
+    },
+    {
+      id: 'TXN-2024-001235',
+      userId: 2,
+      username: 'streamer_girl',
+      type: 'payout',
+      amount: 450.00,
+      status: 'pending',
+      paymentMethod: 'bank_transfer',
+      timestamp: '2024-01-15 16:45:12',
+      description: '主播收益提现',
+      fees: 5.00,
+      netAmount: 445.00
+    },
+    {
+      id: 'TXN-2024-001236',
+      userId: 3,
+      username: 'vip_user',
+      type: 'subscription',
+      amount: 29.99,
+      status: 'failed',
+      paymentMethod: 'paypal',
+      timestamp: '2024-01-15 18:20:45',
+      description: 'VIP会员订阅',
+      fees: 0.87,
+      netAmount: 29.12,
+      failureReason: '余额不足'
+    },
+    {
+      id: 'TXN-2024-001237',
+      userId: 4,
+      username: 'regular_user',
+      type: 'refund',
+      amount: -19.99,
+      status: 'completed',
+      paymentMethod: 'credit_card',
+      cardLast4: '1234',
+      timestamp: '2024-01-15 12:15:30',
+      description: '代币购买退款',
+      fees: -0.60,
+      netAmount: -19.39
+    }
+  ]);
+
+  // 支付方式统计
+  const [paymentMethods, setPaymentMethods] = useState([
+    { method: 'credit_card', name: '信用卡', count: 28456, percentage: 62.3, revenue: 78234.50 },
+    { method: 'paypal', name: 'PayPal', count: 12890, percentage: 28.2, revenue: 35678.90 },
+    { method: 'bank_transfer', name: '银行转账', count: 3456, percentage: 7.6, revenue: 9876.40 },
+    { method: 'crypto', name: '加密货币', count: 821, percentage: 1.9, revenue: 2057.70 }
+  ]);
 
   const [users, setUsers] = useState([
     {
@@ -183,6 +229,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome }) => {
     { id: 'dashboard', label: '仪表板', icon: BarChart3 },
     { id: 'users', label: '用户管理', icon: Users },
     { id: 'streamers', label: '主播管理', icon: Video },
+    { id: 'payments', label: '支付管理', icon: CreditCard },
     { id: 'reports', label: '举报管理', icon: AlertTriangle },
     { id: 'analytics', label: '数据分析', icon: PieChart },
     { id: 'settings', label: '系统设置', icon: Settings }
@@ -206,7 +253,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome }) => {
           <div className={`flex items-center space-x-1 text-sm ${
             trend === 'up' ? 'text-green-400' : trend === 'down' ? 'text-red-400' : 'text-slate-400'
           }`}>
-            <TrendingUp size={14} className={trend === 'down' ? 'rotate-180' : ''} />
+            {trend === 'up' ? <TrendingUp size={14} /> : trend === 'down' ? <TrendingDown size={14} /> : <TrendingUp size={14} />}
             <span>{change}</span>
           </div>
         )}
@@ -215,6 +262,54 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome }) => {
       <div className="text-slate-400 text-sm">{title}</div>
     </motion.div>
   );
+
+  const getTransactionStatusColor = (status: string) => {
+    switch (status) {
+      case 'completed': return 'text-green-400 bg-green-400/10';
+      case 'pending': return 'text-yellow-400 bg-yellow-400/10';
+      case 'failed': return 'text-red-400 bg-red-400/10';
+      case 'refunded': return 'text-blue-400 bg-blue-400/10';
+      default: return 'text-slate-400 bg-slate-400/10';
+    }
+  };
+
+  const getTransactionTypeIcon = (type: string) => {
+    switch (type) {
+      case 'token_purchase': return <Wallet className="text-green-400" size={16} />;
+      case 'payout': return <ArrowUpRight className="text-blue-400" size={16} />;
+      case 'subscription': return <Crown className="text-yellow-400" size={16} />;
+      case 'refund': return <ArrowDownRight className="text-red-400" size={16} />;
+      default: return <DollarSign className="text-slate-400" size={16} />;
+    }
+  };
+
+  const getPaymentMethodIcon = (method: string) => {
+    switch (method) {
+      case 'credit_card': return <CreditCard size={16} />;
+      case 'paypal': return <Building size={16} />;
+      case 'bank_transfer': return <Building size={16} />;
+      case 'crypto': return <Zap size={16} />;
+      default: return <CreditCard size={16} />;
+    }
+  };
+
+  const handleTransactionAction = (action: string, transactionId: string) => {
+    switch (action) {
+      case 'view':
+        const transaction = transactions.find(t => t.id === transactionId);
+        setSelectedTransaction(transaction);
+        setShowTransactionModal(true);
+        break;
+      case 'refund':
+        // 处理退款逻辑
+        console.log('Processing refund for:', transactionId);
+        break;
+      case 'retry':
+        // 重试支付逻辑
+        console.log('Retrying payment for:', transactionId);
+        break;
+    }
+  };
 
   const handleUserAction = (action: string, userId: number) => {
     switch (action) {
@@ -262,97 +357,118 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome }) => {
     }
   };
 
-  // Show loading spinner while checking authentication
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-red-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-white">验证身份中...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Show login required message if not logged in
-  if (!isLoggedIn) {
-    return (
-      <>
-        <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+  return (
+    <div className="min-h-screen bg-slate-900">
+      {/* Transaction Detail Modal */}
+      {showTransactionModal && selectedTransaction && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-slate-800 rounded-xl p-8 max-w-md w-full mx-4 text-center"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-slate-800 rounded-xl p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto"
           >
-            <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Lock className="text-red-400" size={32} />
-            </div>
-            <h2 className="text-2xl font-bold text-white mb-4">需要登录</h2>
-            <p className="text-slate-400 mb-6">
-              访问管理员后台需要先登录您的管理员账户
-            </p>
-            <div className="space-y-3">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold text-white">交易详情</h2>
               <button
-                onClick={() => setAuthModalOpen(true)}
-                className="w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-lg transition-colors"
+                onClick={() => setShowTransactionModal(false)}
+                className="text-slate-400 hover:text-white"
               >
-                管理员登录
-              </button>
-              <button
-                onClick={onBackToHome}
-                className="w-full bg-slate-700 hover:bg-slate-600 text-white py-3 rounded-lg transition-colors"
-              >
-                返回首页
+                <XCircle size={24} />
               </button>
             </div>
-            <div className="mt-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-              <p className="text-blue-400 text-sm">
-                测试管理员账号：<span className="font-mono">admin</span><br />
-                测试密码：<span className="font-mono">admin123</span>
-              </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div>
+                  <label className="text-slate-400 text-sm">交易ID</label>
+                  <div className="text-white font-mono">{selectedTransaction.id}</div>
+                </div>
+                <div>
+                  <label className="text-slate-400 text-sm">用户</label>
+                  <div className="text-white">{selectedTransaction.username}</div>
+                </div>
+                <div>
+                  <label className="text-slate-400 text-sm">交易类型</label>
+                  <div className="flex items-center space-x-2">
+                    {getTransactionTypeIcon(selectedTransaction.type)}
+                    <span className="text-white">{selectedTransaction.description}</span>
+                  </div>
+                </div>
+                <div>
+                  <label className="text-slate-400 text-sm">金额</label>
+                  <div className="text-white text-lg font-bold">
+                    ${Math.abs(selectedTransaction.amount).toFixed(2)}
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="text-slate-400 text-sm">状态</label>
+                  <div className={`inline-flex px-3 py-1 rounded-full text-sm font-medium ${getTransactionStatusColor(selectedTransaction.status)}`}>
+                    {selectedTransaction.status}
+                  </div>
+                </div>
+                <div>
+                  <label className="text-slate-400 text-sm">支付方式</label>
+                  <div className="flex items-center space-x-2 text-white">
+                    {getPaymentMethodIcon(selectedTransaction.paymentMethod)}
+                    <span>{selectedTransaction.paymentMethod}</span>
+                    {selectedTransaction.cardLast4 && (
+                      <span className="text-slate-400">****{selectedTransaction.cardLast4}</span>
+                    )}
+                  </div>
+                </div>
+                <div>
+                  <label className="text-slate-400 text-sm">手续费</label>
+                  <div className="text-white">${selectedTransaction.fees.toFixed(2)}</div>
+                </div>
+                <div>
+                  <label className="text-slate-400 text-sm">净收入</label>
+                  <div className="text-white font-bold">${selectedTransaction.netAmount.toFixed(2)}</div>
+                </div>
+                <div>
+                  <label className="text-slate-400 text-sm">时间</label>
+                  <div className="text-white">{selectedTransaction.timestamp}</div>
+                </div>
+              </div>
+            </div>
+
+            {selectedTransaction.failureReason && (
+              <div className="mt-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
+                <div className="flex items-center space-x-2 text-red-400">
+                  <AlertCircle size={16} />
+                  <span className="font-medium">失败原因</span>
+                </div>
+                <div className="text-red-300 mt-1">{selectedTransaction.failureReason}</div>
+              </div>
+            )}
+
+            <div className="flex space-x-3 mt-6">
+              {selectedTransaction.status === 'completed' && selectedTransaction.type !== 'refund' && (
+                <button
+                  onClick={() => handleTransactionAction('refund', selectedTransaction.id)}
+                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors"
+                >
+                  处理退款
+                </button>
+              )}
+              {selectedTransaction.status === 'failed' && (
+                <button
+                  onClick={() => handleTransactionAction('retry', selectedTransaction.id)}
+                  className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors"
+                >
+                  重试支付
+                </button>
+              )}
+              <button className="bg-slate-600 hover:bg-slate-700 text-white px-4 py-2 rounded-lg transition-colors">
+                导出详情
+              </button>
             </div>
           </motion.div>
         </div>
+      )}
 
-        <AuthModal 
-          isOpen={authModalOpen} 
-          onClose={() => setAuthModalOpen(false)}
-          initialMode="login"
-          onAuthSuccess={handleAuthSuccess}
-        />
-      </>
-    );
-  }
-
-  // Show access denied if logged in but not admin
-  if (isLoggedIn && !isAdmin) {
-    return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-slate-800 rounded-xl p-8 max-w-md w-full mx-4 text-center"
-        >
-          <div className="w-16 h-16 bg-yellow-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Shield className="text-yellow-400" size={32} />
-          </div>
-          <h2 className="text-2xl font-bold text-white mb-4">权限不足</h2>
-          <p className="text-slate-400 mb-6">
-            您没有访问管理员后台的权限。请联系系统管理员。
-          </p>
-          <button
-            onClick={onBackToHome}
-            className="w-full bg-slate-700 hover:bg-slate-600 text-white py-3 rounded-lg transition-colors"
-          >
-            返回首页
-          </button>
-        </motion.div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen bg-slate-900">
       {/* User Detail Modal */}
       {showUserModal && selectedUser && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -394,10 +510,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome }) => {
               <div className="space-y-4">
                 <div>
                   <label className="text-slate-400 text-sm">VIP等级</label>
-                  <div className={`flex items-center space-x-2 ${getVipLevelColor(selectedUser.vipLevel)}`}>
-                    {getVipLevelIcon(selectedUser.vipLevel)}
-                    <span className="capitalize">{selectedUser.vipLevel}</span>
-                  </div>
+                  <div className="text-white capitalize">{selectedUser.vipLevel}</div>
                 </div>
                 <div>
                   <label className="text-slate-400 text-sm">国家</label>
@@ -418,17 +531,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome }) => {
             </div>
 
             <div className="flex space-x-3 mt-6">
-              <button
-                onClick={() => handleUserAction(selectedUser.isActive ? 'ban' : 'unban', selectedUser.id)}
-                className={`px-4 py-2 rounded-lg transition-colors ${
-                  selectedUser.isActive 
-                    ? 'bg-red-500 hover:bg-red-600 text-white' 
-                    : 'bg-green-500 hover:bg-green-600 text-white'
-                }`}
-              >
-                {selectedUser.isActive ? '封禁用户' : '解封用户'}
-              </button>
               <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
+                查看交易记录
+              </button>
+              <button className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors">
                 发送消息
               </button>
               <button className="bg-slate-600 hover:bg-slate-700 text-white px-4 py-2 rounded-lg transition-colors">
@@ -438,43 +544,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome }) => {
           </motion.div>
         </div>
       )}
-
-      {/* Header */}
-      <div className="bg-slate-800 border-b border-slate-700 p-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <button 
-                onClick={onBackToHome}
-                className="text-slate-400 hover:text-white transition-colors"
-              >
-                <ArrowLeft size={24} />
-              </button>
-              <div className="flex items-center space-x-3">
-                <Shield className="text-red-500" size={32} />
-                <div>
-                  <h1 className="text-3xl font-bold text-white">管理员后台</h1>
-                  <p className="text-slate-400 mt-1">系统管理与监控</p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex items-center space-x-4">
-              <div className="text-slate-400 text-sm">
-                欢迎，管理员
-              </div>
-              <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2">
-                <Bell size={16} />
-                <span>通知</span>
-                <span className="bg-white/20 px-2 py-1 rounded-full text-xs">3</span>
-              </button>
-              <button className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg transition-colors">
-                <RefreshCw size={16} />
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* Navigation Tabs */}
       <div className="bg-slate-800 border-b border-slate-700">
@@ -514,27 +583,27 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome }) => {
                 color="bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border border-blue-500/30"
               />
               <StatCard
-                icon={<Video size={24} />}
-                title="在线主播"
-                value={`${stats.onlineStreamers}/${stats.totalStreamers}`}
-                change="+5%"
-                trend="up"
-                color="bg-gradient-to-br from-green-500/20 to-teal-500/20 border border-green-500/30"
-              />
-              <StatCard
                 icon={<DollarSign size={24} />}
                 title="今日收益"
                 value={`$${stats.todayRevenue.toLocaleString()}`}
                 change="+8%"
                 trend="up"
+                color="bg-gradient-to-br from-green-500/20 to-teal-500/20 border border-green-500/30"
+              />
+              <StatCard
+                icon={<CreditCard size={24} />}
+                title="今日交易"
+                value={stats.todayTransactions.toLocaleString()}
+                change="+15%"
+                trend="up"
                 color="bg-gradient-to-br from-yellow-500/20 to-orange-500/20 border border-yellow-500/30"
               />
               <StatCard
-                icon={<MessageCircle size={24} />}
-                title="今日消息"
-                value={stats.todayMessages.toLocaleString()}
-                change="-3%"
-                trend="down"
+                icon={<TrendingUp size={24} />}
+                title="支付成功率"
+                value={`${stats.paymentSuccessRate}%`}
+                change="+0.3%"
+                trend="up"
                 color="bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-purple-500/30"
               />
             </div>
@@ -563,34 +632,230 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome }) => {
                 <h3 className="text-xl font-bold text-white mb-4">最近活动</h3>
                 <div className="space-y-4">
                   <div className="flex items-center space-x-3 p-3 bg-slate-700 rounded-lg">
-                    <UserCheck className="text-green-400" size={20} />
+                    <CreditCard className="text-green-400" size={20} />
                     <div className="flex-1">
-                      <div className="text-white text-sm">新用户注册</div>
-                      <div className="text-slate-400 text-xs">user123 刚刚注册</div>
+                      <div className="text-white text-sm">新的代币购买</div>
+                      <div className="text-slate-400 text-xs">user123 购买了1000代币</div>
                     </div>
                     <div className="text-slate-400 text-xs">2分钟前</div>
                   </div>
                   
                   <div className="flex items-center space-x-3 p-3 bg-slate-700 rounded-lg">
-                    <Video className="text-blue-400" size={20} />
+                    <ArrowUpRight className="text-blue-400" size={20} />
                     <div className="flex-1">
-                      <div className="text-white text-sm">主播开始直播</div>
-                      <div className="text-slate-400 text-xs">AngelGirl 开始了直播</div>
+                      <div className="text-white text-sm">主播提现</div>
+                      <div className="text-slate-400 text-xs">AngelGirl 申请提现$450</div>
                     </div>
                     <div className="text-slate-400 text-xs">5分钟前</div>
                   </div>
                   
                   <div className="flex items-center space-x-3 p-3 bg-slate-700 rounded-lg">
-                    <AlertTriangle className="text-yellow-400" size={20} />
+                    <AlertTriangle className="text-red-400" size={20} />
                     <div className="flex-1">
-                      <div className="text-white text-sm">新举报</div>
-                      <div className="text-slate-400 text-xs">用户举报不当内容</div>
+                      <div className="text-white text-sm">支付失败</div>
+                      <div className="text-slate-400 text-xs">信用卡支付被拒绝</div>
                     </div>
                     <div className="text-slate-400 text-xs">10分钟前</div>
                   </div>
                 </div>
               </motion.div>
             </div>
+          </div>
+        )}
+
+        {/* Payments Tab */}
+        {activeTab === 'payments' && (
+          <div className="space-y-8">
+            {/* Payment Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <StatCard
+                icon={<DollarSign size={24} />}
+                title="总收益"
+                value={`$${stats.totalRevenue.toLocaleString()}`}
+                change="+12%"
+                trend="up"
+                color="bg-gradient-to-br from-green-500/20 to-teal-500/20 border border-green-500/30"
+              />
+              <StatCard
+                icon={<Receipt size={24} />}
+                title="总交易数"
+                value={stats.totalTransactions.toLocaleString()}
+                change="+8%"
+                trend="up"
+                color="bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border border-blue-500/30"
+              />
+              <StatCard
+                icon={<ArrowDownRight size={24} />}
+                title="退款总数"
+                value={stats.totalRefunds.toLocaleString()}
+                change="-2%"
+                trend="down"
+                color="bg-gradient-to-br from-red-500/20 to-pink-500/20 border border-red-500/30"
+              />
+              <StatCard
+                icon={<Wallet size={24} />}
+                title="待付款"
+                value={`$${stats.pendingPayouts.toLocaleString()}`}
+                change="+5%"
+                trend="up"
+                color="bg-gradient-to-br from-yellow-500/20 to-orange-500/20 border border-yellow-500/30"
+              />
+            </div>
+
+            {/* Payment Methods Stats */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-slate-800 rounded-xl p-6"
+            >
+              <h3 className="text-xl font-bold text-white mb-6">支付方式统计</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {paymentMethods.map((method, index) => (
+                  <div key={index} className="bg-slate-700 rounded-lg p-4">
+                    <div className="flex items-center space-x-3 mb-3">
+                      {getPaymentMethodIcon(method.method)}
+                      <span className="text-white font-medium">{method.name}</span>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span className="text-slate-400 text-sm">交易数</span>
+                        <span className="text-white">{method.count.toLocaleString()}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-slate-400 text-sm">占比</span>
+                        <span className="text-white">{method.percentage}%</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-slate-400 text-sm">收益</span>
+                        <span className="text-white">${method.revenue.toLocaleString()}</span>
+                      </div>
+                      <div className="w-full bg-slate-600 rounded-full h-2">
+                        <div 
+                          className="bg-blue-500 h-2 rounded-full transition-all duration-500"
+                          style={{ width: `${method.percentage}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Transactions Table */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="bg-slate-800 rounded-xl overflow-hidden"
+            >
+              <div className="p-6 border-b border-slate-700">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xl font-bold text-white">最近交易</h3>
+                  <div className="flex items-center space-x-4">
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" size={20} />
+                      <input
+                        type="text"
+                        placeholder="搜索交易..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="bg-slate-700 text-white pl-10 pr-4 py-2 rounded-lg border border-slate-600 focus:border-red-500 focus:outline-none w-64"
+                      />
+                    </div>
+                    <button className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2">
+                      <Download size={16} />
+                      <span>导出</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-slate-700">
+                    <tr>
+                      <th className="text-left p-4 text-slate-300">交易ID</th>
+                      <th className="text-left p-4 text-slate-300">用户</th>
+                      <th className="text-left p-4 text-slate-300">类型</th>
+                      <th className="text-left p-4 text-slate-300">金额</th>
+                      <th className="text-left p-4 text-slate-300">状态</th>
+                      <th className="text-left p-4 text-slate-300">支付方式</th>
+                      <th className="text-left p-4 text-slate-300">时间</th>
+                      <th className="text-left p-4 text-slate-300">操作</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {transactions.map((transaction) => (
+                      <tr key={transaction.id} className="border-t border-slate-700 hover:bg-slate-700/50">
+                        <td className="p-4">
+                          <span className="text-white font-mono text-sm">{transaction.id}</span>
+                        </td>
+                        <td className="p-4">
+                          <span className="text-white">{transaction.username}</span>
+                        </td>
+                        <td className="p-4">
+                          <div className="flex items-center space-x-2">
+                            {getTransactionTypeIcon(transaction.type)}
+                            <span className="text-white text-sm">{transaction.description}</span>
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <span className={`font-bold ${transaction.amount >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                            ${Math.abs(transaction.amount).toFixed(2)}
+                          </span>
+                        </td>
+                        <td className="p-4">
+                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${getTransactionStatusColor(transaction.status)}`}>
+                            {transaction.status}
+                          </span>
+                        </td>
+                        <td className="p-4">
+                          <div className="flex items-center space-x-2 text-white">
+                            {getPaymentMethodIcon(transaction.paymentMethod)}
+                            <span className="text-sm">{transaction.paymentMethod}</span>
+                            {transaction.cardLast4 && (
+                              <span className="text-slate-400 text-xs">****{transaction.cardLast4}</span>
+                            )}
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <span className="text-slate-400 text-sm">{transaction.timestamp}</span>
+                        </td>
+                        <td className="p-4">
+                          <div className="flex items-center space-x-2">
+                            <button
+                              onClick={() => handleTransactionAction('view', transaction.id)}
+                              className="text-blue-400 hover:text-blue-300 p-1"
+                            >
+                              <Eye size={16} />
+                            </button>
+                            {transaction.status === 'completed' && transaction.type !== 'refund' && (
+                              <button
+                                onClick={() => handleTransactionAction('refund', transaction.id)}
+                                className="text-red-400 hover:text-red-300 p-1"
+                              >
+                                <ArrowDownRight size={16} />
+                              </button>
+                            )}
+                            {transaction.status === 'failed' && (
+                              <button
+                                onClick={() => handleTransactionAction('retry', transaction.id)}
+                                className="text-green-400 hover:text-green-300 p-1"
+                              >
+                                <RefreshCw size={16} />
+                              </button>
+                            )}
+                            <button className="text-slate-400 hover:text-white p-1">
+                              <MoreHorizontal size={16} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </motion.div>
           </div>
         )}
 
@@ -702,132 +967,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome }) => {
                               className={`p-1 ${user.isActive ? 'text-red-400 hover:text-red-300' : 'text-green-400 hover:text-green-300'}`}
                             >
                               {user.isActive ? <Ban size={16} /> : <CheckCircle size={16} />}
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Streamers Tab */}
-        {activeTab === 'streamers' && (
-          <div className="space-y-6">
-            {/* Search and Filters */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" size={20} />
-                  <input
-                    type="text"
-                    placeholder="搜索主播..."
-                    className="bg-slate-800 text-white pl-10 pr-4 py-2 rounded-lg border border-slate-700 focus:border-red-500 focus:outline-none w-64"
-                  />
-                </div>
-                <select className="bg-slate-800 text-white px-4 py-2 rounded-lg border border-slate-700 focus:border-red-500 focus:outline-none">
-                  <option value="all">所有状态</option>
-                  <option value="online">在线</option>
-                  <option value="offline">离线</option>
-                  <option value="verified">已认证</option>
-                  <option value="unverified">未认证</option>
-                </select>
-              </div>
-              
-              <button className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2">
-                <Download size={16} />
-                <span>导出数据</span>
-              </button>
-            </div>
-
-            {/* Streamers Table */}
-            <div className="bg-slate-800 rounded-xl overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-slate-700">
-                    <tr>
-                      <th className="text-left p-4 text-slate-300">主播</th>
-                      <th className="text-left p-4 text-slate-300">分类</th>
-                      <th className="text-left p-4 text-slate-300">状态</th>
-                      <th className="text-left p-4 text-slate-300">观众</th>
-                      <th className="text-left p-4 text-slate-300">关注者</th>
-                      <th className="text-left p-4 text-slate-300">收益</th>
-                      <th className="text-left p-4 text-slate-300">评分</th>
-                      <th className="text-left p-4 text-slate-300">认证</th>
-                      <th className="text-left p-4 text-slate-300">操作</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {streamers.map((streamer) => (
-                      <tr key={streamer.id} className="border-t border-slate-700 hover:bg-slate-700/50">
-                        <td className="p-4">
-                          <div className="flex items-center space-x-3">
-                            <div className="w-10 h-10 bg-slate-600 rounded-full flex items-center justify-center">
-                              <Video className="text-white" size={16} />
-                            </div>
-                            <div>
-                              <div className="text-white font-medium">{streamer.stageName}</div>
-                              <div className="text-slate-400 text-sm">@{streamer.username}</div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="p-4">
-                          <span className="bg-slate-700 text-slate-300 px-2 py-1 rounded text-sm">
-                            {streamer.category}
-                          </span>
-                        </td>
-                        <td className="p-4">
-                          <div className={`flex items-center space-x-2 ${streamer.isOnline ? 'text-green-400' : 'text-slate-400'}`}>
-                            <div className={`w-2 h-2 rounded-full ${streamer.isOnline ? 'bg-green-400' : 'bg-slate-400'}`}></div>
-                            <span>{streamer.status}</span>
-                          </div>
-                        </td>
-                        <td className="p-4">
-                          <span className="text-white">{streamer.currentViewers}</span>
-                        </td>
-                        <td className="p-4">
-                          <span className="text-white">{streamer.totalFollowers.toLocaleString()}</span>
-                        </td>
-                        <td className="p-4">
-                          <span className="text-white">${streamer.totalEarnings.toLocaleString()}</span>
-                        </td>
-                        <td className="p-4">
-                          <div className="flex items-center space-x-1">
-                            <Star className="text-yellow-400" size={14} />
-                            <span className="text-white">{streamer.rating}</span>
-                          </div>
-                        </td>
-                        <td className="p-4">
-                          {streamer.isVerified ? (
-                            <div className="flex items-center space-x-1 text-green-400">
-                              <CheckCircle size={16} />
-                              <span>已认证</span>
-                            </div>
-                          ) : (
-                            <div className="flex items-center space-x-1 text-yellow-400">
-                              <Clock size={16} />
-                              <span>待认证</span>
-                            </div>
-                          )}
-                        </td>
-                        <td className="p-4">
-                          <div className="flex items-center space-x-2">
-                            <button className="text-blue-400 hover:text-blue-300 p-1">
-                              <Eye size={16} />
-                            </button>
-                            {!streamer.isVerified && (
-                              <button
-                                onClick={() => handleStreamerVerify(streamer.id, true)}
-                                className="text-green-400 hover:text-green-300 p-1"
-                              >
-                                <CheckCircle size={16} />
-                              </button>
-                            )}
-                            <button className="text-slate-400 hover:text-white p-1">
-                              <MoreHorizontal size={16} />
                             </button>
                           </div>
                         </td>
