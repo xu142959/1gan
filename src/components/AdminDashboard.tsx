@@ -38,8 +38,11 @@ import {
   FileText,
   PieChart,
   Target,
-  Award
+  Award,
+  User,
+  Lock
 } from 'lucide-react';
+import AuthModal from './AuthModal';
 
 interface AdminDashboardProps {
   onBackToHome: () => void;
@@ -51,6 +54,43 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome }) => {
   const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
   const [showUserModal, setShowUserModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<any>(null);
+  
+  // Authentication states
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  // Check authentication and admin status on component mount
+  useEffect(() => {
+    const checkAuth = () => {
+      // Simulate checking authentication status
+      // In a real app, this would check JWT token, session, etc.
+      const token = localStorage.getItem('authToken');
+      const userRole = localStorage.getItem('userRole');
+      
+      if (token) {
+        setIsLoggedIn(true);
+        // Check if user is admin
+        if (userRole === 'admin') {
+          setIsAdmin(true);
+        }
+      }
+      
+      setLoading(false);
+    };
+
+    checkAuth();
+  }, []);
+
+  const handleAuthSuccess = () => {
+    // Simulate successful login with admin privileges
+    localStorage.setItem('authToken', 'mock-token');
+    localStorage.setItem('userRole', 'admin');
+    setIsLoggedIn(true);
+    setIsAdmin(true);
+    setAuthModalOpen(false);
+  };
 
   // 模拟数据
   const [stats, setStats] = useState({
@@ -222,6 +262,95 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome }) => {
     }
   };
 
+  // Show loading spinner while checking authentication
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-red-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-white">验证身份中...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show login required message if not logged in
+  if (!isLoggedIn) {
+    return (
+      <>
+        <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-slate-800 rounded-xl p-8 max-w-md w-full mx-4 text-center"
+          >
+            <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Lock className="text-red-400" size={32} />
+            </div>
+            <h2 className="text-2xl font-bold text-white mb-4">需要登录</h2>
+            <p className="text-slate-400 mb-6">
+              访问管理员后台需要先登录您的管理员账户
+            </p>
+            <div className="space-y-3">
+              <button
+                onClick={() => setAuthModalOpen(true)}
+                className="w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-lg transition-colors"
+              >
+                管理员登录
+              </button>
+              <button
+                onClick={onBackToHome}
+                className="w-full bg-slate-700 hover:bg-slate-600 text-white py-3 rounded-lg transition-colors"
+              >
+                返回首页
+              </button>
+            </div>
+            <div className="mt-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+              <p className="text-blue-400 text-sm">
+                测试管理员账号：<span className="font-mono">admin</span><br />
+                测试密码：<span className="font-mono">admin123</span>
+              </p>
+            </div>
+          </motion.div>
+        </div>
+
+        <AuthModal 
+          isOpen={authModalOpen} 
+          onClose={() => setAuthModalOpen(false)}
+          initialMode="login"
+          onAuthSuccess={handleAuthSuccess}
+        />
+      </>
+    );
+  }
+
+  // Show access denied if logged in but not admin
+  if (isLoggedIn && !isAdmin) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-slate-800 rounded-xl p-8 max-w-md w-full mx-4 text-center"
+        >
+          <div className="w-16 h-16 bg-yellow-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Shield className="text-yellow-400" size={32} />
+          </div>
+          <h2 className="text-2xl font-bold text-white mb-4">权限不足</h2>
+          <p className="text-slate-400 mb-6">
+            您没有访问管理员后台的权限。请联系系统管理员。
+          </p>
+          <button
+            onClick={onBackToHome}
+            className="w-full bg-slate-700 hover:bg-slate-600 text-white py-3 rounded-lg transition-colors"
+          >
+            返回首页
+          </button>
+        </motion.div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-slate-900">
       {/* User Detail Modal */}
@@ -331,6 +460,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome }) => {
             </div>
             
             <div className="flex items-center space-x-4">
+              <div className="text-slate-400 text-sm">
+                欢迎，管理员
+              </div>
               <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2">
                 <Bell size={16} />
                 <span>通知</span>
