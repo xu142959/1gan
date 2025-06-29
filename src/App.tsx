@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import LiveRoom from './components/LiveRoom';
 import HomePage from './components/HomePage';
@@ -17,7 +17,7 @@ import MyFriendsPage from './components/MyFriendsPage';
 import NotificationsPage from './components/NotificationsPage';
 import SettingsPrivacyPage from './components/SettingsPrivacyPage';
 import StreamerDashboard from './components/StreamerDashboard';
-import AdminDashboard from './components/AdminDashboard';
+import AdminApp from './components/AdminApp';
 
 type ViewType = 
   | 'home' 
@@ -36,14 +36,44 @@ type ViewType =
   | 'my-friends'
   | 'notifications'
   | 'settings-privacy'
-  | 'streamer-dashboard'
-  | 'admin-dashboard';
+  | 'streamer-dashboard';
 
 function App() {
   const [currentView, setCurrentView] = useState<ViewType>('home');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [isAdminMode, setIsAdminMode] = useState(false);
+
+  // Check if current URL is admin
+  useEffect(() => {
+    const path = window.location.pathname;
+    if (path === '/admin' || path.startsWith('/admin/')) {
+      setIsAdminMode(true);
+    } else {
+      setIsAdminMode(false);
+    }
+
+    // Listen for URL changes
+    const handlePopState = () => {
+      const newPath = window.location.pathname;
+      if (newPath === '/admin' || newPath.startsWith('/admin/')) {
+        setIsAdminMode(true);
+      } else {
+        setIsAdminMode(false);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  const navigateToAdmin = () => {
+    window.history.pushState({}, '', '/admin');
+    setIsAdminMode(true);
+  };
 
   const navigateToHome = () => {
+    window.history.pushState({}, '', '/');
+    setIsAdminMode(false);
     setCurrentView('home');
   };
 
@@ -116,18 +146,12 @@ function App() {
     setCurrentView('streamer-dashboard');
   };
 
-  const navigateToAdminDashboard = () => {
-    setCurrentView('admin-dashboard');
-  };
+  // Render Admin App if in admin mode
+  if (isAdminMode) {
+    return <AdminApp onBackToHome={navigateToHome} />;
+  }
 
-  // Check if current URL is /admin
-  React.useEffect(() => {
-    const path = window.location.pathname;
-    if (path === '/admin') {
-      setCurrentView('admin-dashboard');
-    }
-  }, []);
-
+  // Render Main App
   return (
     <div className="bg-slate-900 min-h-screen">
       <Navbar 
@@ -137,7 +161,7 @@ function App() {
         onNotificationsClick={navigateToNotifications}
         onSettingsPrivacyClick={navigateToSettingsPrivacy}
         onStreamerDashboardClick={navigateToStreamerDashboard}
-        onAdminDashboardClick={navigateToAdminDashboard}
+        onAdminDashboardClick={navigateToAdmin}
       />
       <div className="pt-16">
         {currentView === 'home' && (
@@ -239,11 +263,6 @@ function App() {
         )}
         {currentView === 'streamer-dashboard' && (
           <StreamerDashboard 
-            onBackToHome={navigateToHome}
-          />
-        )}
-        {currentView === 'admin-dashboard' && (
-          <AdminDashboard 
             onBackToHome={navigateToHome}
           />
         )}
