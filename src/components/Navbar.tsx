@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Search, Bell, User, Gift, Settings, LogOut, Crown, Heart, Users, Bookmark, Shield, Volume2, RefreshCw, Video } from 'lucide-react';
+import { Menu, X, Search, Bell, User, Gift, Settings, LogOut, Crown, Heart, Users, Bookmark, Shield, Volume2, RefreshCw, Video, Wallet } from 'lucide-react';
 import AuthModal from './AuthModal';
+import PaymentModal from './PaymentModal';
+import WalletModal from './WalletModal';
 
 interface NavbarProps {
   onLogoClick: () => void;
@@ -36,11 +38,14 @@ const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [paymentModalOpen, setPaymentModalOpen] = useState(false);
+  const [walletModalOpen, setWalletModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [hiddenMode, setHiddenMode] = useState(false);
   const [isAdmin, setIsAdmin] = useState(true); // 模拟管理员权限
+  const [userTokens, setUserTokens] = useState(1250); // 模拟用户代币余额
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Check if current page is admin dashboard
@@ -54,11 +59,20 @@ const Navbar: React.FC<NavbarProps> = ({
   const handleAuthSuccess = () => {
     setIsLoggedIn(true);
     setAuthModalOpen(false);
+    // 模拟加载用户代币余额
+    setUserTokens(1250);
+  };
+
+  const handlePaymentSuccess = () => {
+    setPaymentModalOpen(false);
+    // 模拟更新代币余额
+    setUserTokens(prev => prev + 1000);
   };
 
   const handleLogout = () => {
     setIsLoggedIn(false);
     setShowUserDropdown(false);
+    setUserTokens(0);
   };
 
   const toggleUserDropdown = () => {
@@ -129,7 +143,7 @@ const Navbar: React.FC<NavbarProps> = ({
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => openAuthModal('register')}
+                  onClick={() => isLoggedIn ? setPaymentModalOpen(true) : openAuthModal('register')}
                   className="bg-yellow-400 text-slate-900 px-4 py-2 rounded-full font-bold hover:bg-yellow-300 transition-colors text-sm"
                 >
                   添加代币
@@ -141,9 +155,12 @@ const Navbar: React.FC<NavbarProps> = ({
                 <div className="relative" ref={dropdownRef}>
                   <button 
                     onClick={toggleUserDropdown}
-                    className="text-white hover:text-red-200 transition-colors"
+                    className="text-white hover:text-red-200 transition-colors flex items-center space-x-2"
                   >
                     <User size={20} />
+                    {!isAdminPage && (
+                      <span className="text-sm font-medium">{userTokens.toLocaleString()}</span>
+                    )}
                   </button>
 
                   <AnimatePresence>
@@ -168,6 +185,17 @@ const Navbar: React.FC<NavbarProps> = ({
                               )}
                             </div>
                           </div>
+                          
+                          {/* Tokens Balance */}
+                          {!isAdminPage && (
+                            <div className="mt-3 flex items-center justify-between">
+                              <div className="flex items-center space-x-2">
+                                <Wallet className="text-green-400" size={16} />
+                                <span className="text-slate-300 text-sm">代币余额</span>
+                              </div>
+                              <span className="text-white font-bold">{userTokens.toLocaleString()}</span>
+                            </div>
+                          )}
                           
                           {/* Level Info */}
                           <div className="mt-3 flex items-center justify-between">
@@ -199,6 +227,34 @@ const Navbar: React.FC<NavbarProps> = ({
                             <span className="text-sm font-medium">获得终极会员</span>
                           </div>
                         </div>
+
+                        {/* Wallet Actions */}
+                        {!isAdminPage && (
+                          <div className="p-4 border-b border-slate-700">
+                            <div className="grid grid-cols-2 gap-3">
+                              <button
+                                onClick={() => {
+                                  setShowUserDropdown(false);
+                                  setPaymentModalOpen(true);
+                                }}
+                                className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg text-sm transition-colors flex items-center justify-center space-x-1"
+                              >
+                                <Wallet size={14} />
+                                <span>充值</span>
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setShowUserDropdown(false);
+                                  setWalletModalOpen(true);
+                                }}
+                                className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm transition-colors flex items-center justify-center space-x-1"
+                              >
+                                <Gift size={14} />
+                                <span>钱包</span>
+                              </button>
+                            </div>
+                          </div>
+                        )}
 
                         {/* Menu Items */}
                         <div className="py-2">
@@ -245,8 +301,8 @@ const Navbar: React.FC<NavbarProps> = ({
                             <span className="text-sm">直播中心</span>
                           </button>
 
-                          {/* Admin Dashboard - Only show for admins */}
-                          {isAdmin && (
+                          {/* Admin Dashboard - Only show for admins and not on admin page */}
+                          {isAdmin && !isAdminPage && (
                             <button 
                               onClick={() => handleMenuItemClick(onAdminDashboardClick)}
                               className="w-full flex items-center space-x-3 px-4 py-2 text-red-300 hover:bg-slate-700 hover:text-red-200 transition-colors border-t border-slate-700"
@@ -328,6 +384,21 @@ const Navbar: React.FC<NavbarProps> = ({
         onClose={() => setAuthModalOpen(false)}
         initialMode={authMode}
         onAuthSuccess={handleAuthSuccess}
+      />
+
+      <PaymentModal
+        isOpen={paymentModalOpen}
+        onClose={() => setPaymentModalOpen(false)}
+        onSuccess={handlePaymentSuccess}
+      />
+
+      <WalletModal
+        isOpen={walletModalOpen}
+        onClose={() => setWalletModalOpen(false)}
+        onAddTokens={() => {
+          setWalletModalOpen(false);
+          setPaymentModalOpen(true);
+        }}
       />
     </>
   );

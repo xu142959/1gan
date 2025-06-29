@@ -11,19 +11,22 @@
     "server": "node server/index.cjs"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "express": "^4.18.2",
     "framer-motion": "^10.16.16",
+    "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.344.0",
+    "multer": "^1.4.5-lts.1",
+    "paypal-rest-sdk": "^1.8.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "express": "^4.18.2",
-    "cors": "^2.8.5",
-    "bcryptjs": "^2.4.3",
-    "jsonwebtoken": "^9.0.2",
-    "multer": "^1.4.5-lts.1",
-    "sqlite3": "^5.1.6",
-    "uuid": "^9.0.1",
     "socket.io": "^4.7.4",
-    "socket.io-client": "^4.7.4"
+    "socket.io-client": "^4.7.4",
+    "sqlite3": "^5.1.6",
+    "stripe": "^18.2.1",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.1",

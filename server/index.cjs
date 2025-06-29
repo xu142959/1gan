@@ -10,6 +10,7 @@ const streamerRoutes = require('./routes/streamers.cjs');
 const userRoutes = require('./routes/users.cjs');
 const liveRoutes = require('./routes/live.cjs');
 const adminRoutes = require('./routes/admin.cjs');
+const paymentRoutes = require('./routes/payments.cjs');
 
 // Import database
 const db = require('./database/db.cjs');
@@ -32,11 +33,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Routes
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', authRoutes.router);
 app.use('/api/streamers', streamerRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/live', liveRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/payments', paymentRoutes);
 
 // Socket.IO for real-time features
 io.on('connection', (socket) => {
@@ -143,6 +145,7 @@ server.listen(PORT, () => {
   console.log(`🚀 服务器运行在端口 ${PORT}`);
   console.log(`📡 Socket.IO 服务已启动`);
   console.log(`🗄️  数据库已连接`);
+  console.log(`💳 支付接口已启用`);
 });
 
 module.exports = { app, io };
