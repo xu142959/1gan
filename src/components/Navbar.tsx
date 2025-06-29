@@ -43,6 +43,9 @@ const Navbar: React.FC<NavbarProps> = ({
   const [isAdmin, setIsAdmin] = useState(true); // 模拟管理员权限
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  // Check if current page is admin dashboard
+  const isAdminPage = window.location.pathname === '/admin';
+
   const openAuthModal = (mode: 'login' | 'register') => {
     setAuthMode(mode);
     setAuthModalOpen(true);
@@ -121,14 +124,17 @@ const Navbar: React.FC<NavbarProps> = ({
                 <Gift size={20} />
               </button>
               
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => openAuthModal('register')}
-                className="bg-yellow-400 text-slate-900 px-4 py-2 rounded-full font-bold hover:bg-yellow-300 transition-colors text-sm"
-              >
-                添加代币
-              </motion.button>
+              {/* Only show Add Tokens button if NOT on admin page */}
+              {!isAdminPage && (
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => openAuthModal('register')}
+                  className="bg-yellow-400 text-slate-900 px-4 py-2 rounded-full font-bold hover:bg-yellow-300 transition-colors text-sm"
+                >
+                  添加代币
+                </motion.button>
+              )}
 
               {/* User Profile Dropdown */}
               {isLoggedIn ? (
