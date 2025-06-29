@@ -17,6 +17,7 @@ import MyFriendsPage from './components/MyFriendsPage';
 import NotificationsPage from './components/NotificationsPage';
 import SettingsPrivacyPage from './components/SettingsPrivacyPage';
 import StreamerDashboard from './components/StreamerDashboard';
+import AdminDashboard from './components/AdminDashboard';
 
 type ViewType = 
   | 'home' 
@@ -35,7 +36,8 @@ type ViewType =
   | 'my-friends'
   | 'notifications'
   | 'settings-privacy'
-  | 'streamer-dashboard';
+  | 'streamer-dashboard'
+  | 'admin-dashboard';
 
 function App() {
   const [currentView, setCurrentView] = useState<ViewType>('home');
@@ -114,6 +116,18 @@ function App() {
     setCurrentView('streamer-dashboard');
   };
 
+  const navigateToAdminDashboard = () => {
+    setCurrentView('admin-dashboard');
+  };
+
+  // Check if current URL is /admin
+  React.useEffect(() => {
+    const path = window.location.pathname;
+    if (path === '/admin') {
+      setCurrentView('admin-dashboard');
+    }
+  }, []);
+
   return (
     <div className="bg-slate-900 min-h-screen">
       <Navbar 
@@ -123,6 +137,7 @@ function App() {
         onNotificationsClick={navigateToNotifications}
         onSettingsPrivacyClick={navigateToSettingsPrivacy}
         onStreamerDashboardClick={navigateToStreamerDashboard}
+        onAdminDashboardClick={navigateToAdminDashboard}
       />
       <div className="pt-16">
         {currentView === 'home' && (
@@ -224,6 +239,11 @@ function App() {
         )}
         {currentView === 'streamer-dashboard' && (
           <StreamerDashboard 
+            onBackToHome={navigateToHome}
+          />
+        )}
+        {currentView === 'admin-dashboard' && (
+          <AdminDashboard 
             onBackToHome={navigateToHome}
           />
         )}

@@ -10,6 +10,7 @@ interface NavbarProps {
   onNotificationsClick?: () => void;
   onSettingsPrivacyClick?: () => void;
   onStreamerDashboardClick?: () => void;
+  onAdminDashboardClick?: () => void;
 }
 
 const Logo: React.FC<{ onClick: () => void }> = ({ onClick }) => (
@@ -30,7 +31,8 @@ const Navbar: React.FC<NavbarProps> = ({
   onMyFriendsClick,
   onNotificationsClick,
   onSettingsPrivacyClick,
-  onStreamerDashboardClick
+  onStreamerDashboardClick,
+  onAdminDashboardClick
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
@@ -38,6 +40,7 @@ const Navbar: React.FC<NavbarProps> = ({
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [hiddenMode, setHiddenMode] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(true); // 模拟管理员权限
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const openAuthModal = (mode: 'login' | 'register') => {
@@ -154,6 +157,9 @@ const Navbar: React.FC<NavbarProps> = ({
                             </div>
                             <div>
                               <div className="text-white font-medium">gtx1</div>
+                              {isAdmin && (
+                                <div className="text-red-400 text-xs font-medium">管理员</div>
+                              )}
                             </div>
                           </div>
                           
@@ -232,6 +238,17 @@ const Navbar: React.FC<NavbarProps> = ({
                             <Video size={16} />
                             <span className="text-sm">直播中心</span>
                           </button>
+
+                          {/* Admin Dashboard - Only show for admins */}
+                          {isAdmin && (
+                            <button 
+                              onClick={() => handleMenuItemClick(onAdminDashboardClick)}
+                              className="w-full flex items-center space-x-3 px-4 py-2 text-red-300 hover:bg-slate-700 hover:text-red-200 transition-colors border-t border-slate-700"
+                            >
+                              <Shield size={16} />
+                              <span className="text-sm">管理员后台</span>
+                            </button>
+                          )}
                         </div>
 
                         {/* Settings Section */}
