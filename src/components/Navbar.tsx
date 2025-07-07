@@ -86,6 +86,15 @@ const Navbar: React.FC<NavbarProps> = ({
     }
   };
 
+  // Handle Add Tokens button click
+  const handleAddTokensClick = () => {
+    if (isLoggedIn) {
+      setPaymentModalOpen(true);
+    } else {
+      openAuthModal('login');
+    }
+  };
+
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -138,12 +147,12 @@ const Navbar: React.FC<NavbarProps> = ({
                 <Gift size={20} />
               </button>
               
-              {/* Only show Add Tokens button if NOT on admin page */}
+              {/* Add Tokens Button - Show for all users, but behavior changes based on login status */}
               {!isAdminPage && (
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => isLoggedIn ? setPaymentModalOpen(true) : openAuthModal('register')}
+                  onClick={handleAddTokensClick}
                   className="bg-yellow-400 text-slate-900 px-4 py-2 rounded-full font-bold hover:bg-yellow-300 transition-colors text-sm"
                 >
                   添加代币
