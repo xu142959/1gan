@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Search, Bell, User, Gift, Settings, LogOut, Crown, Heart, Users, Bookmark, Shield, Volume2, RefreshCw, Video, Wallet } from 'lucide-react';
+import { useAuth } from '../hooks/useAuth';
 import AuthModal from './AuthModal';
 import PaymentModal from './PaymentModal';
 import WalletModal from './WalletModal';
@@ -41,12 +42,12 @@ const Navbar: React.FC<NavbarProps> = ({
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const [walletModalOpen, setWalletModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [hiddenMode, setHiddenMode] = useState(false);
   const [isAdmin, setIsAdmin] = useState(true); // 模拟管理员权限
-  const [userTokens, setUserTokens] = useState(1250); // 模拟用户代币余额
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const { user, isLoggedIn, login, register, logout, updateTokens } = useAuth();
 
   // Check if current page is admin dashboard
   const isAdminPage = window.location.pathname === '/admin';
@@ -57,22 +58,16 @@ const Navbar: React.FC<NavbarProps> = ({
   };
 
   const handleAuthSuccess = () => {
-    setIsLoggedIn(true);
     setAuthModalOpen(false);
-    // 模拟加载用户代币余额
-    setUserTokens(1250);
   };
 
   const handlePaymentSuccess = () => {
     setPaymentModalOpen(false);
-    // 模拟更新代币余额
-    setUserTokens(prev => prev + 1000);
   };
 
   const handleLogout = () => {
-    setIsLoggedIn(false);
+    logout();
     setShowUserDropdown(false);
-    setUserTokens(0);
   };
 
   const toggleUserDropdown = () => {
@@ -168,7 +163,7 @@ const Navbar: React.FC<NavbarProps> = ({
                   >
                     <User size={20} />
                     {!isAdminPage && (
-                      <span className="text-sm font-medium">{userTokens.toLocaleString()}</span>
+                      <span className="text-sm font-medium">{user?.tokens?.toLocaleString() || 0}</span>
                     )}
                   </button>
 
@@ -188,7 +183,7 @@ const Navbar: React.FC<NavbarProps> = ({
                               <span className="text-white font-bold text-lg">G</span>
                             </div>
                             <div>
-                              <div className="text-white font-medium">gtx1</div>
+                              <div className="text-white font-medium">{user?.username || 'Guest'}</div>
                               {isAdmin && (
                                 <div className="text-red-400 text-xs font-medium">管理员</div>
                               )}
@@ -202,7 +197,7 @@ const Navbar: React.FC<NavbarProps> = ({
                                 <Wallet className="text-green-400" size={16} />
                                 <span className="text-slate-300 text-sm">代币余额</span>
                               </div>
-                              <span className="text-white font-bold">{userTokens.toLocaleString()}</span>
+                              <span className="text-white font-bold">{user?.tokens?.toLocaleString() || 0}</span>
                             </div>
                           )}
                           
@@ -210,21 +205,21 @@ const Navbar: React.FC<NavbarProps> = ({
                           <div className="mt-3 flex items-center justify-between">
                             <div className="flex items-center space-x-2">
                               <div className="w-6 h-6 bg-slate-600 rounded-full flex items-center justify-center">
-                                <span className="text-white text-xs font-bold">7</span>
+                                <span className="text-white text-xs font-bold">{user?.level || 1}</span>
                               </div>
                               <span className="text-slate-300 text-sm">等级</span>
                             </div>
-                            <span className="text-slate-400 text-sm">灰色级别</span>
+                            <span className="text-slate-400 text-sm">{user?.vip_level || 'none'}</span>
                           </div>
                           
                           {/* Progress Bar */}
                           <div className="mt-2">
                             <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
-                              <span>85 /100经验分</span>
+                              <span>{user?.experience || 0} /100经验分</span>
                               <span>3分钟</span>
                             </div>
                             <div className="w-full bg-slate-700 rounded-full h-2">
-                              <div className="bg-slate-500 h-2 rounded-full" style={{ width: '85%' }}></div>
+                              <div className="bg-slate-500 h-2 rounded-full" style={{ width: `${(user?.experience || 0)}%` }}></div>
                             </div>
                           </div>
                         </div>
@@ -393,12 +388,17 @@ const Navbar: React.FC<NavbarProps> = ({
         onClose={() => setAuthModalOpen(false)}
         initialMode={authMode}
         onAuthSuccess={handleAuthSuccess}
+        onLogin={login}
+        onRegister={register}
       />
 
       <PaymentModal
         isOpen={paymentModalOpen}
         onClose={() => setPaymentModalOpen(false)}
-        onSuccess={handlePaymentSuccess}
+        onSuccess={(tokens) => {
+          updateTokens((user?.tokens || 0) + tokens);
+          handlePaymentSuccess();
+        }}
       />
 
       <WalletModal
@@ -408,6 +408,7 @@ const Navbar: React.FC<NavbarProps> = ({
           setWalletModalOpen(false);
           setPaymentModalOpen(true);
         }}
+        userTokens={user?.tokens || 0}
       />
     </>
   );

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { AuthProvider } from './hooks/useAuth';
 import Navbar from './components/Navbar';
 import LiveRoom from './components/LiveRoom';
 import HomePage from './components/HomePage';
@@ -153,121 +154,123 @@ function App() {
 
   // Render Main App
   return (
-    <div className="bg-slate-900 min-h-screen">
-      <Navbar 
-        onLogoClick={navigateToHome}
-        onUserProfileClick={navigateToUserProfile}
-        onMyFriendsClick={navigateToMyFriends}
-        onNotificationsClick={navigateToNotifications}
-        onSettingsPrivacyClick={navigateToSettingsPrivacy}
-        onStreamerDashboardClick={navigateToStreamerDashboard}
-        onAdminDashboardClick={navigateToAdmin}
-      />
-      <div className="pt-16">
-        {currentView === 'home' && (
-          <HomePage 
-            onStreamClick={navigateToLive} 
-            onCategoriesClick={navigateToCategories}
-            onFavoritesClick={navigateToFavorites}
-            onRecommendedClick={navigateToRecommended}
-            onMyModelsClick={navigateToMyModels}
-            onMyCollectionClick={navigateToMyCollection}
-            onPrivacySettingsClick={navigateToPrivacySettings}
-            onNewStreamersClick={navigateToNewStreamers}
-            onHotStreamersClick={navigateToHotStreamers}
-            onVIPStreamersClick={navigateToVIPStreamers}
-          />
-        )}
-        {currentView === 'live' && (
-          <LiveRoom onBackToHome={navigateToHome} />
-        )}
-        {currentView === 'categories' && (
-          <CategoriesPage 
-            onBackToHome={navigateToHome} 
-            onCategoryClick={navigateToCategoryView}
-          />
-        )}
-        {currentView === 'category-view' && (
-          <CategoryViewPage 
-            categoryName={selectedCategory}
-            onBackToCategories={navigateBackToCategories}
-            onStreamClick={navigateToLive}
-          />
-        )}
-        {currentView === 'favorites' && (
-          <FavoritesPage 
-            onBackToHome={navigateToHome}
-            onStreamClick={navigateToLive}
-          />
-        )}
-        {currentView === 'recommended' && (
-          <RecommendedPage 
-            onBackToHome={navigateToHome}
-            onStreamClick={navigateToLive}
-          />
-        )}
-        {currentView === 'my-models' && (
-          <MyModelsPage 
-            onBackToHome={navigateToHome}
-            onStreamClick={navigateToLive}
-          />
-        )}
-        {currentView === 'my-collection' && (
-          <MyCollectionPage 
-            onBackToHome={navigateToHome}
-            onStreamClick={navigateToLive}
-          />
-        )}
-        {currentView === 'privacy-settings' && (
-          <PrivacySettingsPage 
-            onBackToHome={navigateToHome}
-          />
-        )}
-        {currentView === 'new-streamers' && (
-          <NewStreamersPage 
-            onBackToHome={navigateToHome}
-            onStreamClick={navigateToLive}
-          />
-        )}
-        {currentView === 'hot-streamers' && (
-          <HotStreamersPage 
-            onBackToHome={navigateToHome}
-            onStreamClick={navigateToLive}
-          />
-        )}
-        {currentView === 'vip-streamers' && (
-          <VIPStreamersPage 
-            onBackToHome={navigateToHome}
-            onStreamClick={navigateToLive}
-          />
-        )}
-        {currentView === 'user-profile' && (
-          <UserProfilePage 
-            onBackToHome={navigateToHome}
-          />
-        )}
-        {currentView === 'my-friends' && (
-          <MyFriendsPage 
-            onBackToHome={navigateToHome}
-          />
-        )}
-        {currentView === 'notifications' && (
-          <NotificationsPage 
-            onBackToHome={navigateToHome}
-          />
-        )}
-        {currentView === 'settings-privacy' && (
-          <SettingsPrivacyPage 
-            onBackToHome={navigateToHome}
-          />
-        )}
-        {currentView === 'streamer-dashboard' && (
-          <StreamerDashboard 
-            onBackToHome={navigateToHome}
-          />
-        )}
+    <AuthProvider>
+      <div className="bg-slate-900 min-h-screen">
+        <Navbar 
+          onLogoClick={navigateToHome}
+          onUserProfileClick={navigateToUserProfile}
+          onMyFriendsClick={navigateToMyFriends}
+          onNotificationsClick={navigateToNotifications}
+          onSettingsPrivacyClick={navigateToSettingsPrivacy}
+          onStreamerDashboardClick={navigateToStreamerDashboard}
+          onAdminDashboardClick={navigateToAdmin}
+        />
+        <div className="pt-16">
+          {currentView === 'home' && (
+            <HomePage 
+              onStreamClick={navigateToLive} 
+              onCategoriesClick={navigateToCategories}
+              onFavoritesClick={navigateToFavorites}
+              onRecommendedClick={navigateToRecommended}
+              onMyModelsClick={navigateToMyModels}
+              onMyCollectionClick={navigateToMyCollection}
+              onPrivacySettingsClick={navigateToPrivacySettings}
+              onNewStreamersClick={navigateToNewStreamers}
+              onHotStreamersClick={navigateToHotStreamers}
+              onVIPStreamersClick={navigateToVIPStreamers}
+            />
+          )}
+          {currentView === 'live' && (
+            <LiveRoom onBackToHome={navigateToHome} />
+          )}
+          {currentView === 'categories' && (
+            <CategoriesPage 
+              onBackToHome={navigateToHome} 
+              onCategoryClick={navigateToCategoryView}
+            />
+          )}
+          {currentView === 'category-view' && (
+            <CategoryViewPage 
+              categoryName={selectedCategory}
+              onBackToCategories={navigateBackToCategories}
+              onStreamClick={navigateToLive}
+            />
+          )}
+          {currentView === 'favorites' && (
+            <FavoritesPage 
+              onBackToHome={navigateToHome}
+              onStreamClick={navigateToLive}
+            />
+          )}
+          {currentView === 'recommended' && (
+            <RecommendedPage 
+              onBackToHome={navigateToHome}
+              onStreamClick={navigateToLive}
+            />
+          )}
+          {currentView === 'my-models' && (
+            <MyModelsPage 
+              onBackToHome={navigateToHome}
+              onStreamClick={navigateToLive}
+            />
+          )}
+          {currentView === 'my-collection' && (
+            <MyCollectionPage 
+              onBackToHome={navigateToHome}
+              onStreamClick={navigateToLive}
+            />
+          )}
+          {currentView === 'privacy-settings' && (
+            <PrivacySettingsPage 
+              onBackToHome={navigateToHome}
+            />
+          )}
+          {currentView === 'new-streamers' && (
+            <NewStreamersPage 
+              onBackToHome={navigateToHome}
+              onStreamClick={navigateToLive}
+            />
+          )}
+          {currentView === 'hot-streamers' && (
+            <HotStreamersPage 
+              onBackToHome={navigateToHome}
+              onStreamClick={navigateToLive}
+            />
+          )}
+          {currentView === 'vip-streamers' && (
+            <VIPStreamersPage 
+              onBackToHome={navigateToHome}
+              onStreamClick={navigateToLive}
+            />
+          )}
+          {currentView === 'user-profile' && (
+            <UserProfilePage 
+              onBackToHome={navigateToHome}
+            />
+          )}
+          {currentView === 'my-friends' && (
+            <MyFriendsPage 
+              onBackToHome={navigateToHome}
+            />
+          )}
+          {currentView === 'notifications' && (
+            <NotificationsPage 
+              onBackToHome={navigateToHome}
+            />
+          )}
+          {currentView === 'settings-privacy' && (
+            <SettingsPrivacyPage 
+              onBackToHome={navigateToHome}
+            />
+          )}
+          {currentView === 'streamer-dashboard' && (
+            <StreamerDashboard 
+              onBackToHome={navigateToHome}
+            />
+          )}
+        </div>
       </div>
-    </div>
+    </AuthProvider>
   );
 }
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { adminAPI } from '../services/api';
 import { 
   Users, 
   Video, 
@@ -87,167 +88,111 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome }) => {
   const [userFilter, setUserFilter] = useState('all');
   const [streamerFilter, setStreamerFilter] = useState('all');
   const [sortBy, setSortBy] = useState('created_at');
+  const [loading, setLoading] = useState(false);
 
-  // 模拟数据
-  const [stats, setStats] = useState({
-    totalUsers: 15847,
-    totalStreamers: 2341,
-    onlineStreamers: 456,
-    activeRooms: 234,
-    totalRevenue: 125847.50,
-    todayRevenue: 3247.80,
-    totalMessages: 89234,
-    todayMessages: 1247,
-    totalTransactions: 45623,
-    todayTransactions: 234,
-    totalRefunds: 1247,
-    pendingPayouts: 15420.30,
-    averageTransactionValue: 27.50,
-    paymentSuccessRate: 98.5,
-    bannedUsers: 234,
-    verifiedStreamers: 1456,
-    pendingVerifications: 89
-  });
+  const [stats, setStats] = useState<any>({});
+  const [users, setUsers] = useState<any[]>([]);
+  const [streamers, setStreamers] = useState<any[]>([]);
 
-  const [users, setUsers] = useState([
-    {
-      id: 1,
-      username: 'user123',
-      email: 'user123@example.com',
-      level: 7,
-      tokens: 1250,
-      vipLevel: 'gold',
-      country: 'CN',
-      age: 25,
-      gender: 'female',
-      isActive: true,
-      isBanned: false,
-      lastLogin: '2024-01-15 14:30',
-      totalSpent: 5420,
-      joinDate: '2023-06-15',
-      avatar: 'https://images.pexels.com/photos/1391498/pexels-photo-1391498.jpeg?auto=compress&cs=tinysrgb&w=100',
-      loginCount: 245,
-      deviceInfo: 'Chrome on Windows',
-      ipAddress: '192.168.1.1',
-      referralCode: 'REF123',
-      totalReferrals: 5
-    },
-    {
-      id: 2,
-      username: 'streamer_girl',
-      email: 'streamer@example.com',
-      level: 12,
-      tokens: 8750,
-      vipLevel: 'diamond',
-      country: 'US',
-      age: 22,
-      gender: 'female',
-      isActive: true,
-      isBanned: false,
-      lastLogin: '2024-01-15 16:45',
-      totalSpent: 12340,
-      joinDate: '2023-03-20',
-      avatar: 'https://images.pexels.com/photos/1542085/pexels-photo-1542085.jpeg?auto=compress&cs=tinysrgb&w=100',
-      loginCount: 456,
-      deviceInfo: 'Safari on iPhone',
-      ipAddress: '10.0.0.1',
-      referralCode: 'REF456',
-      totalReferrals: 12
-    },
-    {
-      id: 3,
-      username: 'premium_user',
-      email: 'premium@example.com',
-      level: 15,
-      tokens: 15000,
-      vipLevel: 'platinum',
-      country: 'JP',
-      age: 28,
-      gender: 'male',
-      isActive: true,
-      isBanned: false,
-      lastLogin: '2024-01-15 18:20',
-      totalSpent: 25000,
-      joinDate: '2023-01-10',
-      avatar: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=100',
-      loginCount: 789,
-      deviceInfo: 'Chrome on Mac',
-      ipAddress: '172.16.0.1',
-      referralCode: 'REF789',
-      totalReferrals: 25
+  // 加载数据
+  useEffect(() => {
+    loadStats();
+    if (activeTab === 'users') {
+      loadUsers();
+    } else if (activeTab === 'streamers') {
+      loadStreamers();
     }
-  ]);
+  }, [activeTab]);
 
-  const [streamers, setStreamers] = useState([
-    {
-      id: 1,
-      userId: 2,
-      username: 'streamer_girl',
-      email: 'streamer@example.com',
-      stageName: 'AngelGirl',
-      category: '聊天',
-      isVerified: true,
-      isOnline: true,
-      status: 'live',
-      currentViewers: 1234,
-      totalFollowers: 5678,
-      totalEarnings: 12500.50,
-      rating: 4.8,
-      totalRatings: 456,
-      vipLevel: 'diamond',
-      roomStatus: 'live',
-      lastSeen: '2024-01-15 16:45',
-      createdAt: '2023-03-20',
-      avatar: 'https://images.pexels.com/photos/1542085/pexels-photo-1542085.jpeg?auto=compress&cs=tinysrgb&w=100',
-      country: 'US',
-      age: 22,
-      languages: ['English', 'Spanish'],
-      tags: ['新人', '可爱', '聊天'],
-      hourlyRate: 50,
-      privateRate: 100,
-      totalShows: 234,
-      averageShowDuration: 45,
-      topSpender: 'premium_user',
-      verificationDate: '2023-04-01',
-      documentsStatus: 'approved',
-      payoutMethod: 'PayPal',
-      taxInfo: 'completed'
-    },
-    {
-      id: 2,
-      userId: 4,
-      username: 'hot_model',
-      email: 'model@example.com',
-      stageName: 'HotBabe',
-      category: '舞蹈',
-      isVerified: false,
-      isOnline: false,
-      status: 'offline',
-      currentViewers: 0,
-      totalFollowers: 2345,
-      totalEarnings: 8750.25,
-      rating: 4.5,
-      totalRatings: 234,
-      vipLevel: 'gold',
-      roomStatus: 'offline',
-      lastSeen: '2024-01-15 12:30',
-      createdAt: '2023-08-15',
-      avatar: 'https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=100',
-      country: 'BR',
-      age: 24,
-      languages: ['Portuguese', 'English'],
-      tags: ['舞蹈', '热情', '互动'],
-      hourlyRate: 40,
-      privateRate: 80,
-      totalShows: 156,
-      averageShowDuration: 38,
-      topSpender: 'user123',
-      verificationDate: null,
-      documentsStatus: 'pending',
-      payoutMethod: 'Bank Transfer',
-      taxInfo: 'pending'
+  const loadStats = async () => {
+    try {
+      const data = await adminAPI.getStats();
+      setStats(data);
+    } catch (error) {
+      console.error('Failed to load stats:', error);
+      // 使用模拟数据作为后备
+      setStats({
+        totalUsers: 15847,
+        totalStreamers: 2341,
+        onlineStreamers: 456,
+        activeRooms: 234,
+        totalRevenue: 125847.50,
+        todayRevenue: 3247.80,
+        totalMessages: 89234,
+        todayMessages: 1247
+      });
     }
-  ]);
+  };
+
+  const loadUsers = async () => {
+    try {
+      setLoading(true);
+      const data = await adminAPI.getUsers({ 
+        search: searchTerm, 
+        sort: sortBy,
+        limit: 50
+      });
+      setUsers(data.users);
+    } catch (error) {
+      console.error('Failed to load users:', error);
+      // 使用模拟数据作为后备
+      setUsers([
+        {
+          id: 1,
+          username: 'user123',
+          email: 'user123@example.com',
+          level: 7,
+          tokens: 1250,
+          vip_level: 'gold',
+          country: 'CN',
+          age: 25,
+          gender: 'female',
+          is_active: true,
+          last_login: '2024-01-15 14:30',
+          total_spent: 5420,
+          created_at: '2023-06-15'
+        }
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadStreamers = async () => {
+    try {
+      setLoading(true);
+      const data = await adminAPI.getStreamers({ 
+        search: searchTerm, 
+        status: streamerFilter === 'all' ? undefined : streamerFilter,
+        limit: 50
+      });
+      setStreamers(data.streamers);
+    } catch (error) {
+      console.error('Failed to load streamers:', error);
+      // 使用模拟数据作为后备
+      setStreamers([
+        {
+          id: 1,
+          userId: 2,
+          username: 'streamer_girl',
+          email: 'streamer@example.com',
+          stageName: 'AngelGirl',
+          category: '聊天',
+          isVerified: true,
+          isOnline: true,
+          status: 'live',
+          currentViewers: 1234,
+          totalFollowers: 5678,
+          totalEarnings: 12500.50,
+          rating: 4.8,
+          totalRatings: 456,
+          vipLevel: 'diamond'
+        }
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const tabs = [
     { id: 'dashboard', label: '仪表板', icon: BarChart3 },
@@ -295,19 +240,18 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome }) => {
 
     switch (action) {
       case 'ban':
-        setUsers(prev => prev.map(u => 
-          u.id === userId ? { ...u, isBanned: true, isActive: false } : u
-        ));
+        adminAPI.banUser(userId.toString()).then(() => {
+          setUsers(prev => prev.map(u => 
+            u.id === userId ? { ...u, is_active: false } : u
+          ));
+        }).catch(console.error);
         break;
       case 'unban':
-        setUsers(prev => prev.map(u => 
-          u.id === userId ? { ...u, isBanned: false, isActive: true } : u
-        ));
-        break;
-      case 'delete':
-        if (confirm('确定要删除这个用户吗？此操作不可恢复。')) {
-          setUsers(prev => prev.filter(u => u.id !== userId));
-        }
+        adminAPI.unbanUser(userId.toString()).then(() => {
+          setUsers(prev => prev.map(u => 
+            u.id === userId ? { ...u, is_active: true } : u
+          ));
+        }).catch(console.error);
         break;
       case 'view':
         setSelectedUser(user);
@@ -322,19 +266,18 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome }) => {
 
     switch (action) {
       case 'verify':
-        setStreamers(prev => prev.map(s => 
-          s.id === streamerId ? { ...s, isVerified: true, verificationDate: new Date().toISOString().split('T')[0] } : s
-        ));
+        adminAPI.verifyStreamer(streamerId.toString()).then(() => {
+          setStreamers(prev => prev.map(s => 
+            s.id === streamerId ? { ...s, isVerified: true } : s
+          ));
+        }).catch(console.error);
         break;
       case 'unverify':
-        setStreamers(prev => prev.map(s => 
-          s.id === streamerId ? { ...s, isVerified: false, verificationDate: null } : s
-        ));
-        break;
-      case 'ban':
-        setStreamers(prev => prev.map(s => 
-          s.id === streamerId ? { ...s, status: 'banned', isOnline: false } : s
-        ));
+        adminAPI.unverifyStreamer(streamerId.toString()).then(() => {
+          setStreamers(prev => prev.map(s => 
+            s.id === streamerId ? { ...s, isVerified: false } : s
+          ));
+        }).catch(console.error);
         break;
       case 'view':
         setSelectedStreamer(streamer);
@@ -548,9 +491,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome }) => {
                   <div className="flex items-center justify-center space-x-2 mt-2">
                     {selectedStreamer.isVerified && (
                       <div className="bg-green-500/20 text-green-400 px-2 py-1 rounded text-xs flex items-center">
-                        <Verified size={12} className="mr-1" />
-                        已认证
-                      </div>
+                      <div className="text-2xl font-bold text-white">24/7</div>
                     )}
                     <div className={`px-2 py-1 rounded text-xs ${
                       selectedStreamer.isOnline ? 'bg-green-500/20 text-green-400' : 'bg-slate-500/20 text-slate-400'
@@ -855,15 +796,13 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome }) => {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredUsers.map((user) => (
+                    {users.map((user) => (
                       <tr key={user.id} className="border-t border-slate-600 hover:bg-slate-600/50">
                         <td className="p-4">
                           <div className="flex items-center space-x-3">
-                            <img 
-                              src={user.avatar} 
-                              alt={user.username}
-                              className="w-10 h-10 rounded-full object-cover"
-                            />
+                            <div className="w-10 h-10 bg-slate-600 rounded-full flex items-center justify-center">
+                              <span className="text-white font-bold">{user.username.charAt(0).toUpperCase()}</span>
+                            </div>
                             <div>
                               <div className="text-white font-medium">{user.username}</div>
                               <div className="text-slate-400 text-sm">{user.email}</div>
@@ -879,23 +818,23 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome }) => {
                         </td>
                         <td className="p-4 text-white">{user.tokens.toLocaleString()}</td>
                         <td className="p-4">
-                          <span className={`px-2 py-1 rounded text-xs ${getVipLevelBg(user.vipLevel)} ${getVipLevelColor(user.vipLevel)}`}>
-                            {user.vipLevel.toUpperCase()}
+                          <span className={`px-2 py-1 rounded text-xs ${getVipLevelBg(user.vip_level)} ${getVipLevelColor(user.vip_level)}`}>
+                            {user.vip_level.toUpperCase()}
                           </span>
                         </td>
-                        <td className="p-4 text-white">${user.totalSpent.toLocaleString()}</td>
+                        <td className="p-4 text-white">${user.total_spent?.toLocaleString() || 0}</td>
                         <td className="p-4">
                           <span className={`px-2 py-1 rounded text-xs ${
-                            user.isBanned 
+                            !user.is_active 
                               ? 'bg-red-500/20 text-red-400' 
-                              : user.isActive 
+                              : user.is_active 
                                 ? 'bg-green-500/20 text-green-400' 
                                 : 'bg-slate-500/20 text-slate-400'
                           }`}>
-                            {user.isBanned ? '已封禁' : user.isActive ? '活跃' : '非活跃'}
+                            {!user.is_active ? '已封禁' : user.is_active ? '活跃' : '非活跃'}
                           </span>
                         </td>
-                        <td className="p-4 text-slate-400 text-sm">{user.lastLogin}</td>
+                        <td className="p-4 text-slate-400 text-sm">{user.last_login}</td>
                         <td className="p-4">
                           <div className="flex items-center space-x-2">
                             <button 
@@ -906,18 +845,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome }) => {
                               <Eye size={16} />
                             </button>
                             <button 
-                              onClick={() => handleUserAction(user.isBanned ? 'unban' : 'ban', user.id)}
-                              className={user.isBanned ? 'text-green-400 hover:text-green-300' : 'text-red-400 hover:text-red-300'}
-                              title={user.isBanned ? '解封' : '封禁'}
+                              onClick={() => handleUserAction(!user.is_active ? 'unban' : 'ban', user.id)}
+                              className={!user.is_active ? 'text-green-400 hover:text-green-300' : 'text-red-400 hover:text-red-300'}
+                              title={!user.is_active ? '解封' : '封禁'}
                             >
-                              {user.isBanned ? <UserCheck size={16} /> : <Ban size={16} />}
-                            </button>
-                            <button 
-                              onClick={() => handleUserAction('delete', user.id)}
-                              className="text-red-400 hover:text-red-300"
-                              title="删除用户"
-                            >
-                              <Trash2 size={16} />
+                              {!user.is_active ? <UserCheck size={16} /> : <Ban size={16} />}
                             </button>
                           </div>
                         </td>
@@ -979,15 +911,13 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome }) => {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredStreamers.map((streamer) => (
+                    {streamers.map((streamer) => (
                       <tr key={streamer.id} className="border-t border-slate-600 hover:bg-slate-600/50">
                         <td className="p-4">
                           <div className="flex items-center space-x-3">
-                            <img 
-                              src={streamer.avatar} 
-                              alt={streamer.stageName}
-                              className="w-10 h-10 rounded-full object-cover"
-                            />
+                            <div className="w-10 h-10 bg-slate-600 rounded-full flex items-center justify-center">
+                              <span className="text-white font-bold">{streamer.stageName?.charAt(0).toUpperCase() || streamer.username.charAt(0).toUpperCase()}</span>
+                            </div>
                             <div>
                               <div className="text-white font-medium">{streamer.stageName}</div>
                               <div className="text-slate-400 text-sm">@{streamer.username}</div>
@@ -1007,14 +937,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome }) => {
                             </span>
                           </div>
                         </td>
-                        <td className="p-4 text-white">{streamer.currentViewers.toLocaleString()}</td>
-                        <td className="p-4 text-white">{streamer.totalFollowers.toLocaleString()}</td>
-                        <td className="p-4 text-green-400">${streamer.totalEarnings.toLocaleString()}</td>
+                        <td className="p-4 text-white">{streamer.currentViewers?.toLocaleString() || 0}</td>
+                        <td className="p-4 text-white">{streamer.totalFollowers?.toLocaleString() || 0}</td>
+                        <td className="p-4 text-green-400">${streamer.totalEarnings?.toLocaleString() || 0}</td>
                         <td className="p-4">
                           <div className="flex items-center space-x-1">
                             <Star className="text-yellow-400" size={14} />
-                            <span className="text-white">{streamer.rating}</span>
-                            <span className="text-slate-400 text-xs">({streamer.totalRatings})</span>
+                            <span className="text-white">{streamer.rating || 0}</span>
+                            <span className="text-slate-400 text-xs">({streamer.totalRatings || 0})</span>
                           </div>
                         </td>
                         <td className="p-4">
@@ -1051,13 +981,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToHome }) => {
                               title={streamer.isVerified ? '取消认证' : '认证'}
                             >
                               {streamer.isVerified ? <XCircle size={16} /> : <CheckCircle size={16} />}
-                            </button>
-                            <button 
-                              onClick={() => handleStreamerAction('ban', streamer.id)}
-                              className="text-red-400 hover:text-red-300"
-                              title="封禁主播"
-                            >
-                              <Ban size={16} />
                             </button>
                           </div>
                         </td>

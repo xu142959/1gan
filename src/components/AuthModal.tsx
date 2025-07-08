@@ -7,9 +7,18 @@ interface AuthModalProps {
   onClose: () => void;
   initialMode?: 'login' | 'register';
   onAuthSuccess?: () => void;
+  onLogin?: (credentials: { email: string; password: string }) => Promise<void>;
+  onRegister?: (userData: { username: string; email: string; password: string; firstName?: string; lastName?: string }) => Promise<void>;
 }
 
-const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'login', onAuthSuccess }) => {
+const AuthModal: React.FC<AuthModalProps> = ({ 
+  isOpen, 
+  onClose, 
+  initialMode = 'login', 
+  onAuthSuccess,
+  onLogin,
+  onRegister
+}) => {
   const [mode, setMode] = useState<'login' | 'register'>(initialMode);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
@@ -36,34 +45,49 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'l
     setLoading(true);
     setError('');
 
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    if (mode === 'login') {
-      // Check test credentials
-      if (formData.email === 'admin' && formData.password === 'admin123') {
-        console.log('Login successful with test credentials');
+    try {
+      if (mode === 'login') {
+        if (onLogin) {
+          await onLogin({ email: formData.email, password: formData.password });
+        } else {
+          // Fallback for test credentials
+          if (formData.email === 'admin' && formData.password === 'admin123') {
+            console.log('Login successful with test credentials');
+          } else {
+            throw new Error('用户名或密码错误。请使用测试账号：admin / admin123');
+          }
+        }
         if (onAuthSuccess) {
           onAuthSuccess();
         }
       } else {
-        setError('用户名或密码错误。请使用测试账号：admin / admin123');
-      }
-    } else {
-      // Registration logic
-      if (formData.password !== formData.confirmPassword) {
-        setError('密码不匹配');
-      } else if (formData.password.length < 6) {
-        setError('密码至少需要6个字符');
-      } else {
-        console.log('Registration successful:', formData);
+        // Registration logic
+        if (formData.password !== formData.confirmPassword) {
+          setError('密码不匹配');
+          return;
+        } else if (formData.password.length < 6) {
+          setError('密码至少需要6个字符');
+          return;
+        }
+        
+        if (onRegister) {
+          await onRegister({
+            username: formData.firstName + formData.lastName,
+            email: formData.email,
+            password: formData.password,
+            firstName: formData.firstName,
+            lastName: formData.lastName
+          });
+        }
         if (onAuthSuccess) {
           onAuthSuccess();
         }
       }
+    } catch (error) {
+      setError(error instanceof Error ? error.message : '操作失败，请重试');
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   const switchMode = () => {

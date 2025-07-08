@@ -1,53 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Eye, Heart, Star, Gift, Users, Play, Loader } from 'lucide-react';
+import { useStreamers } from '../hooks/useStreamers';
 
 interface LiveGridProps {
   onStreamClick: () => void;
 }
 
-// Generate more streams for infinite scroll
-const generateStreams = (startId: number, count: number) => {
-  const usernames = [
-    'badgirl777888', 'XxnTiP', 'GouGou-111', 'irohani_usagi', 'hymsy3333',
-    'yznt-dudu', 'FUTU-new', 'Luming404', 'CZ000333', 'sujsoyso-7',
-    'MM_YY_SS', 'yunbaobaby', 'sweetie_angel', 'dancing_queen', 'music_lover',
-    'game_master', 'art_creator', 'fitness_girl', 'cooking_star', 'chat_buddy'
-  ];
-
-  const tags = [
-    ['新人', '亚洲'], ['聊天', '音乐'], ['舞蹈'], ['日本', '可爱'],
-    ['健身', '运动'], ['唱歌', '才艺'], ['新人', '互动'], ['游戏', '电竞'],
-    ['聊天'], ['美妆', '时尚'], ['双人', '互动'], ['可爱', '萌系'],
-    ['艺术', '创作'], ['户外', '旅行'], ['学习', '教育'], ['美食', '烹饪']
-  ];
-
-  const thumbnails = [
-    'https://images.pexels.com/photos/1391498/pexels-photo-1391498.jpeg?auto=compress&cs=tinysrgb&w=300',
-    'https://images.pexels.com/photos/1542085/pexels-photo-1542085.jpeg?auto=compress&cs=tinysrgb&w=300',
-    'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=300',
-    'https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=300',
-    'https://images.pexels.com/photos/1391499/pexels-photo-1391499.jpeg?auto=compress&cs=tinysrgb&w=300'
-  ];
-
-  return Array.from({ length: count }, (_, index) => ({
-    id: startId + index,
-    username: usernames[Math.floor(Math.random() * usernames.length)] + Math.floor(Math.random() * 1000),
-    viewers: Math.floor(Math.random() * 3000) + 100,
-    thumbnail: thumbnails[Math.floor(Math.random() * thumbnails.length)],
-    isLive: true,
-    isHD: Math.random() > 0.4,
-    tags: tags[Math.floor(Math.random() * tags.length)]
-  }));
-};
-
-const initialStreams = generateStreams(1, 24);
-
 const LiveGrid: React.FC<LiveGridProps> = ({ onStreamClick }) => {
   const [selectedSection, setSelectedSection] = useState('我的最爱');
-  const [streams, setStreams] = useState(initialStreams);
-  const [loading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
+  const { streamers, loading, hasMore, loadMore, refresh } = useStreamers('online');
 
   const sections = [
     { name: '我的最爱', count: 12 },
@@ -55,42 +17,21 @@ const LiveGrid: React.FC<LiveGridProps> = ({ onStreamClick }) => {
     { name: '匹配您的最新精选', count: 18 }
   ];
 
-  const loadMoreStreams = useCallback(async () => {
-    if (loading || !hasMore) return;
-
-    setLoading(true);
-    
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    const newStreams = generateStreams(streams.length + 1, 12);
-    setStreams(prev => [...prev, ...newStreams]);
-    
-    // Stop loading more after 100 streams for demo
-    if (streams.length >= 100) {
-      setHasMore(false);
-    }
-    
-    setLoading(false);
-  }, [loading, hasMore, streams.length]);
-
-  const handleScroll = useCallback(() => {
-    if (window.innerHeight + document.documentElement.scrollTop 
-        >= document.documentElement.offsetHeight - 1000) {
-      loadMoreStreams();
-    }
-  }, [loadMoreStreams]);
-
   useEffect(() => {
+    const handleScroll = () => {
+      if (window.innerHeight + document.documentElement.scrollTop 
+          >= document.documentElement.offsetHeight - 1000) {
+        loadMore();
+      }
+    };
+
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [handleScroll]);
+  }, [loadMore]);
 
   const handleSectionChange = (sectionName: string) => {
     setSelectedSection(sectionName);
-    // Reset streams when changing sections
-    setStreams(generateStreams(1, 24));
-    setHasMore(true);
+    refresh();
     window.scrollTo(0, 0);
   };
 
@@ -123,7 +64,7 @@ const LiveGrid: React.FC<LiveGridProps> = ({ onStreamClick }) => {
 
       {/* Live Streams Grid */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-        {streams.map((stream, index) => (
+        {streamers.map((stream, index) => (
           <motion.div
             key={stream.id}
             initial={{ opacity: 0, y: 20 }}
@@ -135,7 +76,7 @@ const LiveGrid: React.FC<LiveGridProps> = ({ onStreamClick }) => {
           >
             <div className="relative aspect-[4/3]">
               <img
-                src={stream.thumbnail}
+                src={stream.avatar_url}
                 alt={stream.username}
                 className="w-full h-full object-cover"
               />
@@ -235,8 +176,8 @@ const LiveGrid: React.FC<LiveGridProps> = ({ onStreamClick }) => {
       <motion.button
         initial={{ opacity: 0, scale: 0 }}
         animate={{ 
-          opacity: streams.length > 24 ? 1 : 0,
-          scale: streams.length > 24 ? 1 : 0
+          opacity: streamers.length > 24 ? 1 : 0,
+          scale: streamers.length > 24 ? 1 : 0
         }}
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         className="fixed bottom-8 right-8 bg-red-500 hover:bg-red-600 text-white p-3 rounded-full shadow-lg transition-colors z-50"
